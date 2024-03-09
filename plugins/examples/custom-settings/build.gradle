@@ -17,7 +17,6 @@
  * under the License.
  */
 apply plugin: 'elasticsearch.esplugin'
-apply plugin: 'elasticsearch.yaml-rest-test'
 
 esplugin {
   name 'custom-settings'

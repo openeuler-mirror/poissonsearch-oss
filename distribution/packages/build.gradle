@@ -189,7 +189,7 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
       assert type == 'rpm'
       into('/usr/share/elasticsearch') {
         from(rootProject.file('licenses')) {
-          include oss ? 'APACHE-LICENSE-2.0.txt' : 'ELASTIC-LICENSE.txt'
+          include 'APACHE-LICENSE-2.0.txt'
           rename { 'LICENSE.txt' }
         }
         fileMode 0644
@@ -502,15 +502,9 @@ subprojects {
           Path copyrightPath
           String expectedLicense
           String licenseFilename
-          if (project.name.contains('oss-')) {
-            copyrightPath = packageExtractionDir.toPath().resolve("usr/share/doc/elasticsearch-oss/copyright")
-            expectedLicense = "ASL-2.0"
-            licenseFilename = "APACHE-LICENSE-2.0.txt"
-          } else {
-            copyrightPath = packageExtractionDir.toPath().resolve("usr/share/doc/elasticsearch/copyright")
-            expectedLicense = "Elastic-License"
-            licenseFilename = "ELASTIC-LICENSE.txt"
-          }
+          copyrightPath = packageExtractionDir.toPath().resolve("usr/share/doc/elasticsearch-oss/copyright")
+          expectedLicense = "ASL-2.0"
+          licenseFilename = "APACHE-LICENSE-2.0.txt"
           final List<String> header = Arrays.asList("Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/",
             "Copyright: Elasticsearch B.V. <info@elastic.co>",
             "License: " + expectedLicense)
@@ -525,11 +519,7 @@ subprojects {
         onlyIf rpmExists
         doLast {
           String licenseFilename
-          if (project.name.contains('oss-')) {
-            licenseFilename = "APACHE-LICENSE-2.0.txt"
-          } else {
-            licenseFilename = "ELASTIC-LICENSE.txt"
-          }
+          licenseFilename = "APACHE-LICENSE-2.0.txt"
           final List<String> licenseLines = Files.readAllLines(rootDir.toPath().resolve("licenses/" + licenseFilename))
           final Path licensePath = packageExtractionDir.toPath().resolve("usr/share/elasticsearch/LICENSE.txt")
           assertLinesInFile(licensePath, licenseLines)
@@ -562,11 +552,7 @@ subprojects {
         exec.standardOutput = output
         doLast {
           String expectedLicense
-          if (project.name.contains('oss-')) {
-            expectedLicense = "ASL-2.0"
-          } else {
-            expectedLicense = "Elastic-License"
-          }
+          expectedLicense = "ASL-2.0"
           final Pattern pattern = Pattern.compile("\\s*License: (.+)")
           final String info = output.toString('UTF-8')
           final String[] actualLines = info.split("\n")
@@ -599,11 +585,7 @@ subprojects {
         doLast {
           String license = output.toString('UTF-8')
           String expectedLicense
-          if (project.name.contains('oss-')) {
-            expectedLicense = "ASL 2.0"
-          } else {
-            expectedLicense = "Elastic License"
-          }
+          expectedLicense = "ASL 2.0"
           if (license != expectedLicense) {
             throw new GradleException("expected license [${expectedLicense}] for [${-> buildDist.get().outputs.files.singleFile}] but was [${license}]")
           }

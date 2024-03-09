@@ -106,12 +106,6 @@ public class RestResourcesPlugin implements Plugin<Project> {
                     Dependency restTestdependency = project.getDependencies()
                         .project(Map.of("path", ":rest-api-spec", "configuration", "restTests"));
                     project.getDependencies().add(task.coreConfig.getName(), restTestdependency);
-                    // x-pack
-                    task.xpackConfig = xpackTestConfig;
-                    Dependency restXPackTestdependency = project.getDependencies()
-                        .project(Map.of("path", ":x-pack:plugin", "configuration", "restXpackTests"));
-                    project.getDependencies().add(task.xpackConfig.getName(), restXPackTestdependency);
-                    task.dependsOn(task.xpackConfig);
                 } else {
                     Dependency dependency = project.getDependencies()
                         .create("org.elasticsearch:rest-api-spec:" + VersionProperties.getElasticsearch());
@@ -136,11 +130,6 @@ public class RestResourcesPlugin implements Plugin<Project> {
                     Dependency restSpecDependency = project.getDependencies()
                         .project(Map.of("path", ":rest-api-spec", "configuration", "restSpecs"));
                     project.getDependencies().add(task.coreConfig.getName(), restSpecDependency);
-                    task.xpackConfig = xpackSpecConfig;
-                    Dependency restXpackSpecDependency = project.getDependencies()
-                        .project(Map.of("path", ":x-pack:plugin", "configuration", "restXpackSpecs"));
-                    project.getDependencies().add(task.xpackConfig.getName(), restXpackSpecDependency);
-                    task.dependsOn(task.xpackConfig);
                 } else {
                     Dependency dependency = project.getDependencies()
                         .create("org.elasticsearch:rest-api-spec:" + VersionProperties.getElasticsearch());

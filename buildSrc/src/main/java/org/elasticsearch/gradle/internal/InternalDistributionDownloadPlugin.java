@@ -155,7 +155,7 @@ public class InternalDistributionDownloadPlugin implements Plugin<Project> {
             ? ""
             : "-" + architecture.toString().toLowerCase();
 
-        if (distribution.getFlavor() == ElasticsearchDistribution.Flavor.OSS) {
+        if (distribution.getType() == ElasticsearchDistribution.Type.ARCHIVE || distribution.getFlavor() == ElasticsearchDistribution.Flavor.OSS) {
             projectName += "oss-";
         }
 

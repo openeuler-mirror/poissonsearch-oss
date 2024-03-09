@@ -62,7 +62,7 @@ if (VersionProperties.elasticsearch.toString().endsWith('-SNAPSHOT')) {
 } else {
   licenseCommit = "v${version}"
 }
-String elasticLicenseUrl = "https://raw.githubusercontent.com/elastic/elasticsearch/${licenseCommit}/licenses/ELASTIC-LICENSE.txt"
+String elasticLicenseUrl = "https://raw.githubusercontent.com/elastic/elasticsearch/${licenseCommit}/licenses/ELASTIC-LICENSE-NOT_EXIST.txt"
 
 configure(allprojects - project(':distribution:archives:integ-test-zip')) {
   project.pluginManager.withPlugin('nebula.maven-base-publish') {
@@ -356,17 +356,7 @@ allprojects {
     }
   }
 
-  File licenseHeaderFile
-  String prefix = ':x-pack'
-  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    prefix = prefix.replace(':', '_')
-  }
-  if (eclipse.project.name.startsWith(prefix)) {
-    licenseHeaderFile = new File(project.rootDir, 'buildSrc/src/main/resources/license-headers/elastic-license-header.txt')
-  } else {
-    licenseHeaderFile = new File(project.rootDir, 'buildSrc/src/main/resources/license-headers/oss-license-header.txt')
-  }
-
+  File licenseHeaderFile = new File(project.rootDir, 'buildSrc/src/main/resources/license-headers/oss-license-header.txt')
   String lineSeparator = Os.isFamily(Os.FAMILY_WINDOWS) ? '\\\\r\\\\n' : '\\\\n'
   String licenseHeader = licenseHeaderFile.getText('UTF-8').replace(System.lineSeparator(), lineSeparator)
   tasks.register('copyEclipseSettings', Copy) {

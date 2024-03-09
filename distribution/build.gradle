@@ -276,20 +276,6 @@ project.rootProject.subprojects.findAll { it.parent.path == ':modules' }.each { 
   restTestExpansions['expected.modules.count'] += 1
 }
 
-// use licenses from each of the bundled xpack plugins
-Project xpack = project(':x-pack:plugin')
-xpack.subprojects.findAll { it.parent == xpack }.each { Project xpackModule ->
-  File licenses = new File(xpackModule.projectDir, 'licenses')
-  if (licenses.exists()) {
-    buildDefaultNoticeTaskProvider.configure {
-      licensesDir licenses
-      source xpackModule.file('src/main/java')
-    }
-  }
-  copyModule(processDefaultOutputsTaskProvider, xpackModule)
-  copyLog4jProperties(buildDefaultLog4jConfigTaskProvider, xpackModule)
-}
-
 copyModule(processSystemdOutputsTaskProvider, project(':modules:systemd'))
 
 project(':test:external-modules').subprojects.each { Project testModule ->
@@ -341,7 +327,6 @@ configure(subprojects.findAll { ['archives', 'packages'].contains(it.name) }) {
 
     libsPluginCli project(':distribution:tools:plugin-cli')
     libsKeystoreCli project(path: ':distribution:tools:keystore-cli')
-    libsSecurityCli project(':x-pack:plugin:security:cli')
   }
 
   project.ext {
@@ -551,11 +536,7 @@ subprojects {
     final String packagingLoggc = "${pathLogs}/gc.log"
 
     String licenseText
-    if (oss) {
-      licenseText = rootProject.file('licenses/APACHE-LICENSE-2.0.txt').getText('UTF-8')
-    } else {
-      licenseText = rootProject.file('licenses/ELASTIC-LICENSE.txt').getText('UTF-8')
-    }
+    licenseText = rootProject.file('licenses/APACHE-LICENSE-2.0.txt').getText('UTF-8')
     // license text needs to be indented with a single space
     licenseText = ' ' + licenseText.replace('\n', '\n ')
 
@@ -675,10 +656,10 @@ subprojects {
   }
 }
 
-['archives:windows-zip', 'archives:oss-windows-zip',
- 'archives:darwin-tar', 'archives:oss-darwin-tar',
- 'archives:linux-aarch64-tar', 'archives:oss-linux-aarch64-tar',
- 'archives:linux-tar', 'archives:oss-linux-tar',
+['archives:oss-windows-zip',
+ 'archives:oss-darwin-tar',
+ 'archives:oss-linux-aarch64-tar',
+ 'archives:oss-linux-tar',
  'archives:integ-test-zip',
  'packages:rpm', 'packages:deb',
  'packages:aarch64-rpm', 'packages:aarch64-deb',

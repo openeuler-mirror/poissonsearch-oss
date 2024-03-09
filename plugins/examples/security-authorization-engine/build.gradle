@@ -10,13 +10,6 @@ esplugin {
   noticeFile rootProject.file('NOTICE.txt')
 }
 
-dependencies {
-  compileOnly "org.elasticsearch.plugin:x-pack-core:${versions.elasticsearch}"
-  javaRestTestImplementation "org.elasticsearch.client:x-pack-transport:${versions.elasticsearch}"
-  javaRestTestImplementation "org.elasticsearch.plugin:x-pack-core:${versions.elasticsearch}"
-  // let the javaRestTest see the classpath of main
-  javaRestTestImplementation project.sourceSets.main.runtimeClasspath
-}
 //no unit tests
 test.enabled = false
 javaRestTest {
