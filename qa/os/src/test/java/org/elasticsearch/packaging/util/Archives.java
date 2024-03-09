@@ -61,7 +61,7 @@ public class Archives {
     protected static final Logger logger = LogManager.getLogger(Archives.class);
 
     // in the future we'll run as a role user on Windows
-    public static final String ARCHIVE_OWNER = Platforms.WINDOWS ? System.getenv("username") : "elasticsearch";
+    public static final String ARCHIVE_OWNER = Platforms.WINDOWS ? System.getenv("username") : "poissonsearch";
 
     /** This is an arbitrarily chosen value that gives Elasticsearch time to log Bootstrap
      *  errors to the console if they occur before the logging framework is initialized. */

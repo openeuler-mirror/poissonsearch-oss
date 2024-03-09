@@ -199,7 +199,7 @@ Open the `elasticsearch.yml` file:
 
 [source,sh]
 --------------------------------------------------
-sudo vi /etc/elasticsearch/elasticsearch.yml
+sudo vi /etc/poissonsearch/elasticsearch.yml
 --------------------------------------------------
 
 And add the following lines:
@@ -219,21 +219,21 @@ Start Elasticsearch:
 
 [source,sh]
 --------------------------------------------------
-sudo /etc/init.d/elasticsearch start
+sudo /etc/init.d/poissonsearch start
 --------------------------------------------------
 
 If anything goes wrong, you should check logs:
 
 [source,sh]
 --------------------------------------------------
-tail -f /var/log/elasticsearch/elasticsearch.log
+tail -f /var/log/poissonsearch/elasticsearch.log
 --------------------------------------------------
 
 If needed, you can change log level to `trace` by opening `log4j2.properties`:
 
 [source,sh]
 --------------------------------------------------
-sudo vi /etc/elasticsearch/log4j2.properties
+sudo vi /etc/poissonsearch/log4j2.properties
 --------------------------------------------------
 
 and adding the following line:

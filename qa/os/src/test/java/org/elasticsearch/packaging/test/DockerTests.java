@@ -185,7 +185,7 @@ public class DockerTests extends PackagingTestCase {
         Files.setPosixFilePermissions(tempDir.resolve("log4j2.properties"), p644);
 
         // Restart the container
-        final Map<Path, Path> volumes = singletonMap(tempDir, Paths.get("/usr/share/elasticsearch/config"));
+        final Map<Path, Path> volumes = singletonMap(tempDir, Paths.get("/usr/share/poissonsearch/config"));
         final Map<String, String> envVars = singletonMap("ES_JAVA_OPTS", "-XX:-UseCompressedOops");
         runContainer(distribution(), volumes, envVars);
 
@@ -699,7 +699,7 @@ public class DockerTests extends PackagingTestCase {
 
         // UBI image doesn't contain `diff`
         final String ubiLicense = sh.run("cat /licenses/LICENSE").stdout;
-        final String distroLicense = sh.run("cat /usr/share/elasticsearch/LICENSE.txt").stdout;
+        final String distroLicense = sh.run("cat /usr/share/poissonsearch/LICENSE.txt").stdout;
         assertThat(ubiLicense, equalTo(distroLicense));
     }
 

@@ -46,7 +46,7 @@ fi
 # This is also sourced in elasticsearch-env, and is only needed here
 # as well because we use ELASTIC_PASSWORD below. Sourcing this script
 # is idempotent.
-source /usr/share/elasticsearch/bin/elasticsearch-env-from-file
+source /usr/share/poissonsearch/bin/elasticsearch-env-from-file
 
 if [[ -f bin/elasticsearch-users ]]; then
   # Check for the ELASTIC_PASSWORD environment variable to set the
@@ -56,7 +56,7 @@ if [[ -f bin/elasticsearch-users ]]; then
   # enabled, but we have no way of knowing which node we are yet. We'll just
   # honor the variable if it's present.
   if [[ -n "$ELASTIC_PASSWORD" ]]; then
-    [[ -f /usr/share/elasticsearch/config/elasticsearch.keystore ]] || (run_as_other_user_if_needed elasticsearch-keystore create)
+    [[ -f /usr/share/poissonsearch/config/elasticsearch.keystore ]] || (run_as_other_user_if_needed elasticsearch-keystore create)
     if ! (run_as_other_user_if_needed elasticsearch-keystore has-passwd --silent) ; then
       # keystore is unencrypted
       if ! (run_as_other_user_if_needed elasticsearch-keystore list | grep -q '^bootstrap.password$'); then
@@ -76,8 +76,8 @@ fi
 if [[ "$(id -u)" == "0" ]]; then
   # If requested and running as root, mutate the ownership of bind-mounts
   if [[ -n "$TAKE_FILE_OWNERSHIP" ]]; then
-    chown -R 1000:0 /usr/share/elasticsearch/{data,logs}
+    chown -R 1000:0 /usr/share/poissonsearch/{data,logs}
   fi
 fi
 
-run_as_other_user_if_needed /usr/share/elasticsearch/bin/elasticsearch <<<"$KEYSTORE_PASSWORD"
+run_as_other_user_if_needed /usr/share/poissonsearch/bin/elasticsearch <<<"$KEYSTORE_PASSWORD"

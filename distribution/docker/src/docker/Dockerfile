@@ -44,13 +44,13 @@ RUN set -eux ; \\
     mv \${tini_bin} /tini ; \\
     chmod +x /tini
 
-RUN mkdir /usr/share/elasticsearch
-WORKDIR /usr/share/elasticsearch
+RUN mkdir /usr/share/poissonsearch
+WORKDIR /usr/share/poissonsearch
 
 ${source_elasticsearch}
 
 RUN tar zxf /opt/elasticsearch.tar.gz --strip-components=1
-RUN sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' /usr/share/elasticsearch/bin/elasticsearch-env
+RUN sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' /usr/share/poissonsearch/bin/elasticsearch-env
 RUN mkdir -p config config/jvm.options.d data logs
 RUN chmod 0775 config config/jvm.options.d data logs
 COPY config/elasticsearch.yml config/log4j2.properties config/
@@ -76,27 +76,27 @@ RUN for iter in {1..10}; do \\
     done; \\
     (exit \$exit_code)
 
-RUN groupadd -g 1000 elasticsearch && \\
-    adduser -u 1000 -g 1000 -G 0 -d /usr/share/elasticsearch elasticsearch && \\
-    chmod 0775 /usr/share/elasticsearch && \\
-    chown -R 1000:0 /usr/share/elasticsearch
+RUN groupadd -g 1000 poissonsearch && \\
+    adduser -u 1000 -g 1000 -G 0 -d /usr/share/poissonsearch poissonsearch && \\
+    chmod 0775 /usr/share/poissonsearch && \\
+    chown -R 1000:0 /usr/share/poissonsearch
 
-WORKDIR /usr/share/elasticsearch
-COPY --from=builder --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
+WORKDIR /usr/share/poissonsearch
+COPY --from=builder --chown=1000:0 /usr/share/poissonsearch /usr/share/poissonsearch
 COPY --from=builder --chown=0:0 /tini /tini
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
 # REF: https://github.com/elastic/elasticsearch-docker/issues/171
-RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/share/elasticsearch/jdk/lib/security/cacerts
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/share/poissonsearch/jdk/lib/security/cacerts
 
-ENV PATH /usr/share/elasticsearch/bin:\$PATH
+ENV PATH /usr/share/poissonsearch/bin:\$PATH
 
 COPY bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # The JDK's directories' permissions don't allow `java` to be executed under a different
 # group to the default. Fix this.
-RUN find /usr/share/elasticsearch/jdk -type d -exec chmod 0755 '{}' \\; && \\
+RUN find /usr/share/poissonsearch/jdk -type d -exec chmod 0755 '{}' \\; && \\
     chmod g=u /etc/passwd && \\
     chmod 0775 /usr/local/bin/docker-entrypoint.sh
 

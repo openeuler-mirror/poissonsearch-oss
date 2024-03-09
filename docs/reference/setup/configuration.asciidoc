@@ -36,12 +36,12 @@ Alternatively, you can `export` the `ES_PATH_CONF` environment variable via the
 command line or via your shell profile.
 
 For the package distributions, the config directory location defaults to
-`/etc/elasticsearch`. The location of the config directory can also be changed
+`/etc/poissonsearch`. The location of the config directory can also be changed
 via the `ES_PATH_CONF` environment variable, but note that setting this in your
 shell is not sufficient. Instead, this variable is sourced from
-`/etc/default/elasticsearch` (for the Debian package) and
-`/etc/sysconfig/elasticsearch` (for the RPM package). You will need to edit the
-`ES_PATH_CONF=/etc/elasticsearch` entry in one of these files accordingly to
+`/etc/default/poissonsearch` (for the Debian package) and
+`/etc/sysconfig/poissonsearch` (for the RPM package). You will need to edit the
+`ES_PATH_CONF=/etc/poissonsearch` entry in one of these files accordingly to
 change the config directory location.
 
 
@@ -54,16 +54,16 @@ example of changing the path of the data and logs directories:
 [source,yaml]
 --------------------------------------------------
 path:
-    data: /var/lib/elasticsearch
-    logs: /var/log/elasticsearch
+    data: /var/lib/poissonsearch
+    logs: /var/log/poissonsearch
 --------------------------------------------------
 
 Settings can also be flattened as follows:
 
 [source,yaml]
 --------------------------------------------------
-path.data: /var/lib/elasticsearch
-path.logs: /var/log/elasticsearch
+path.data: /var/lib/poissonsearch
+path.logs: /var/log/poissonsearch
 --------------------------------------------------
 
 In YAML, you can format non-scalar values as sequences:

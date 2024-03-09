@@ -47,8 +47,8 @@ import java.util.regex.Pattern
  * The following commands are useful when it comes to check the user/group
  * and files permissions set within the RPM and DEB packages:
  *
- *    rpm -qlp --dump path/to/elasticsearch.rpm
- *    dpkg -c path/to/elasticsearch.deb
+ *    rpm -qlp --dump path/to/poissonsearch.rpm
+ *    dpkg -c path/to/poissonsearch.deb
  */
 
 plugins {
@@ -68,20 +68,20 @@ void addProcessFilesTask(String type, boolean oss, boolean jdk) {
       MavenFilteringHack.filter(it, expansionsForDistribution(type, oss, jdk))
     }
 
-    into('etc/elasticsearch') {
+    into('etc/poissonsearch') {
       with configFiles(type, oss, jdk)
     }
     MavenFilteringHack.filter(it, expansionsForDistribution(type, oss, jdk))
 
     doLast {
       // create empty dirs, we set the permissions when configuring the packages
-      mkdir "${packagingFiles}/var/log/elasticsearch"
-      mkdir "${packagingFiles}/var/lib/elasticsearch"
-      mkdir "${packagingFiles}/usr/share/elasticsearch/plugins"
+      mkdir "${packagingFiles}/var/log/poissonsearch"
+      mkdir "${packagingFiles}/var/lib/poissonsearch"
+      mkdir "${packagingFiles}/usr/share/poissonsearch/plugins"
 
-      // bare empty dir for /etc/elasticsearch and /etc/elasticsearch/jvm.options.d
-      mkdir "${packagingFiles}/elasticsearch"
-      mkdir "${packagingFiles}/elasticsearch/jvm.options.d"
+      // bare empty dir for /etc/poissonsearch and /etc/poissonsearch/jvm.options.d
+      mkdir "${packagingFiles}/poissonsearch"
+      mkdir "${packagingFiles}/poissonsearch/jvm.options.d"
     }
   }
 }
@@ -104,7 +104,7 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
       OS.current().equals(OS.WINDOWS) == false
     }
     dependsOn "process${oss ? 'Oss' : ''}${jdk ? '' : 'NoJdk'}${type.capitalize()}Files"
-    packageName "elasticsearch${oss ? '-oss' : ''}"
+    packageName "poissonsearch${oss ? '-oss' : ''}"
     if (type == 'deb') {
       if (architecture == 'x64') {
         arch('amd64')
@@ -121,7 +121,7 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
         arch('aarch64')
       }
     }
-    // Follow elasticsearch's file naming convention
+    // Follow poissonsearch's file naming convention
     String jdkString = jdk ? "" : "no-jdk-"
     String prefix = "${architecture == 'aarch64' ? 'aarch64-' : ''}${oss ? 'oss-' : ''}${jdk ? '' : 'no-jdk-'}${type}"
     destinationDirectory = file("${prefix}/build/distributions")
@@ -142,7 +142,7 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
 
     // top level "into" directive is not inherited from ospackage for some reason, so we must
     // specify it again explicitly for copying common files
-    into('/usr/share/elasticsearch') {
+    into('/usr/share/poissonsearch') {
       into('bin') {
         with binFiles(type, oss, jdk)
       }
@@ -181,13 +181,13 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
 
     // license files
     if (type == 'deb') {
-      into("/usr/share/doc/${packageName}") {
+      into("/usr/share/doc/poissonsearch") {
         from "${packagingFiles}/copyright"
         fileMode 0644
       }
     } else {
       assert type == 'rpm'
-      into('/usr/share/elasticsearch') {
+      into('/usr/share/poissonsearch') {
         from(rootProject.file('licenses')) {
           include 'APACHE-LICENSE-2.0.txt'
           rename { 'LICENSE.txt' }
@@ -197,29 +197,23 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
     }
 
     // ========= config files =========
-    configurationFile '/etc/elasticsearch/elasticsearch.yml'
-    configurationFile '/etc/elasticsearch/jvm.options'
-    configurationFile '/etc/elasticsearch/log4j2.properties'
-    if (oss == false) {
-      configurationFile '/etc/elasticsearch/role_mapping.yml'
-      configurationFile '/etc/elasticsearch/roles.yml'
-      configurationFile '/etc/elasticsearch/users'
-      configurationFile '/etc/elasticsearch/users_roles'
-    }
+    configurationFile '/etc/poissonsearch/poissonsearch.yml'
+    configurationFile '/etc/poissonsearch/jvm.options'
+    configurationFile '/etc/poissonsearch/log4j2.properties'
     from("${packagingFiles}") {
-      dirMode 02750
+      dirMode 0770
       into('/etc')
-      permissionGroup 'elasticsearch'
+      permissionGroup 'poissonsearch'
       includeEmptyDirs true
       createDirectoryEntry true
-      include("elasticsearch") // empty dir, just to add directory entry
-      include("elasticsearch/jvm.options.d") // empty dir, just to add directory entry
+      include("poissonsearch") // empty dir, just to add directory entry
+      include("poissonsearch/jvm.options.d") // empty dir, just to add directory entry
     }
-    from("${packagingFiles}/etc/elasticsearch") {
-      into('/etc/elasticsearch')
-      dirMode 02750
+    from("${packagingFiles}/etc/poissonsearch") {
+      into('/etc/poissonsearch')
+      dirMode 0770
       fileMode 0660
-      permissionGroup 'elasticsearch'
+      permissionGroup 'poissonsearch'
       includeEmptyDirs true
       createDirectoryEntry true
       fileType CONFIG | NOREPLACE
@@ -228,37 +222,37 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
     configurationFile envFile
     into(new File(envFile).getParent()) {
       fileType CONFIG | NOREPLACE
-      permissionGroup 'elasticsearch'
+      permissionGroup 'poissonsearch'
       fileMode 0660
-      from "${packagingFiles}/env/elasticsearch"
+      from "${packagingFiles}/env/poissonsearch"
     }
 
     // ========= systemd =========
     into('/usr/lib/tmpfiles.d') {
-      from "${packagingFiles}/systemd/elasticsearch.conf"
+      from "${packagingFiles}/systemd/poissonsearch.conf"
       fileMode 0644
     }
     into('/usr/lib/systemd/system') {
       fileType CONFIG | NOREPLACE
-      from "${packagingFiles}/systemd/elasticsearch.service"
+      from "${packagingFiles}/systemd/poissonsearch.service"
       fileMode 0644
     }
     into('/usr/lib/sysctl.d') {
       fileType CONFIG | NOREPLACE
-      from "${packagingFiles}/systemd/sysctl/elasticsearch.conf"
+      from "${packagingFiles}/systemd/sysctl/poissonsearch.conf"
       fileMode 0644
     }
-    into('/usr/share/elasticsearch/bin') {
+    into('/usr/share/poissonsearch/bin') {
       from "${packagingFiles}/systemd/systemd-entrypoint"
       fileMode 0755
     }
 
     // ========= sysV init =========
-    configurationFile '/etc/init.d/elasticsearch'
+    configurationFile '/etc/init.d/poissonsearch'
     into('/etc/init.d') {
       fileMode 0750
       fileType CONFIG | NOREPLACE
-      from "${packagingFiles}/init.d/elasticsearch"
+      from "${packagingFiles}/init.d/poissonsearch"
     }
 
     // ========= empty dirs =========
@@ -275,14 +269,14 @@ Closure commonPackageConfig(String type, boolean oss, boolean jdk, String archit
         dirMode mode
       }
     }
-    copyEmptyDir('/var/log/elasticsearch', 'elasticsearch', 'elasticsearch', 02750)
-    copyEmptyDir('/var/lib/elasticsearch', 'elasticsearch', 'elasticsearch', 02750)
-    copyEmptyDir('/usr/share/elasticsearch/plugins', 'root', 'root', 0755)
+    copyEmptyDir('/var/log/poissonsearch', 'poissonsearch', 'poissonsearch', 02750)
+    copyEmptyDir('/var/lib/poissonsearch', 'poissonsearch', 'poissonsearch', 02750)
+    copyEmptyDir('/usr/share/poissonsearch/plugins', 'root', 'root', 0755)
 
     // the oss package conflicts with the default distribution and vice versa
-    conflicts('elasticsearch' + (oss ? '' : '-oss'))
+    conflicts('poissonsearch' + (oss ? '' : '-oss'))
 
-    into '/usr/share/elasticsearch'
+    into '/usr/share/poissonsearch'
     with noticeFile(oss, jdk)
   }
 }
@@ -291,7 +285,7 @@ apply plugin: 'nebula.ospackage-base'
 
 // this is package indepdendent configuration
 ospackage {
-  maintainer 'Elasticsearch Team <info@elastic.co>'
+  maintainer 'Poissonsearch Team'
   summary 'Distributed RESTful search engine built for the cloud'
   packageDescription '''
     Reference documentation can be found at
@@ -318,7 +312,7 @@ ospackage {
   user 'root'
   permissionGroup 'root'
 
-  into '/usr/share/elasticsearch'
+  into '/usr/share/poissonsearch'
 }
 
 Closure commonDebConfig(boolean oss, boolean jdk, String architecture) {
@@ -343,9 +337,9 @@ Closure commonDebConfig(boolean oss, boolean jdk, String architecture) {
     requires 'adduser'
 
     into('/usr/share/lintian/overrides') {
-      from('src/deb/lintian/elasticsearch')
+      from('src/deb/lintian/poissonsearch')
       if (oss) {
-        rename('elasticsearch', 'elasticsearch-oss')
+        rename('poissonsearch', 'poissonsearch')
       }
     }
   }
@@ -391,15 +385,15 @@ Closure commonRpmConfig(boolean oss, boolean jdk, String architecture) {
     obsoletes packageName, '7.0.0', Flags.LESS
 
     prefix '/usr'
-    packager 'Elasticsearch'
+    packager 'Poissonsearch'
     archiveVersion = project.version.replace('-', '_')
     release = '1'
     os 'LINUX'
-    distribution 'Elasticsearch'
-    vendor 'Elasticsearch'
+    distribution 'Poissonsearch'
+    vendor 'Poissonsearch'
     // TODO ospackage doesn't support icon but we used to have one
 
-    // without this the rpm will have parent dirs of any files we copy in, eg /etc/elasticsearch
+    // without this the rpm will have parent dirs of any files we copy in, eg /etc/poissonsearch
     addParentDirs false
   }
 }
@@ -502,7 +496,7 @@ subprojects {
           Path copyrightPath
           String expectedLicense
           String licenseFilename
-          copyrightPath = packageExtractionDir.toPath().resolve("usr/share/doc/elasticsearch-oss/copyright")
+          copyrightPath = packageExtractionDir.toPath().resolve("usr/share/doc/poissonsearch/copyright")
           expectedLicense = "ASL-2.0"
           licenseFilename = "APACHE-LICENSE-2.0.txt"
           final List<String> header = Arrays.asList("Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/",
@@ -521,7 +515,7 @@ subprojects {
           String licenseFilename
           licenseFilename = "APACHE-LICENSE-2.0.txt"
           final List<String> licenseLines = Files.readAllLines(rootDir.toPath().resolve("licenses/" + licenseFilename))
-          final Path licensePath = packageExtractionDir.toPath().resolve("usr/share/elasticsearch/LICENSE.txt")
+          final Path licensePath = packageExtractionDir.toPath().resolve("usr/share/poissonsearch/LICENSE.txt")
           assertLinesInFile(licensePath, licenseLines)
         }
       }
@@ -534,7 +528,7 @@ subprojects {
       }
       doLast {
         final List<String> noticeLines = Arrays.asList("Elasticsearch", "Copyright 2009-2018 Elasticsearch")
-        final Path noticePath = packageExtractionDir.toPath().resolve("usr/share/elasticsearch/NOTICE.txt")
+        final Path noticePath = packageExtractionDir.toPath().resolve("usr/share/poissonsearch/NOTICE.txt")
         assertLinesInFile(noticePath, noticeLines)
       }
     }

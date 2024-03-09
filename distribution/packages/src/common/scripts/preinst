@@ -27,24 +27,24 @@ case "$1" in
     # Debian ####################################################
     install|upgrade)
 
-        # Create elasticsearch group if not existing
-        if ! getent group elasticsearch > /dev/null 2>&1 ; then
-            echo -n "Creating elasticsearch group..."
-            addgroup --quiet --system elasticsearch
+        # Create poissonsearch group if not existing
+        if ! getent group poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch group..."
+            addgroup --quiet --system poissonsearch
             echo " OK"
         fi
 
-        # Create elasticsearch user if not existing
-        if ! id elasticsearch > /dev/null 2>&1 ; then
-            echo -n "Creating elasticsearch user..."
+        # Create poissonsearch user if not existing
+        if ! id poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch user..."
             adduser --quiet \
                     --system \
                     --no-create-home \
                     --home /nonexistent \
-                    --ingroup elasticsearch \
+                    --ingroup poissonsearch \
                     --disabled-password \
                     --shell /bin/false \
-                    elasticsearch
+                    poissonsearch
             echo " OK"
         fi
     ;;
@@ -54,23 +54,23 @@ case "$1" in
     # RedHat ####################################################
     1|2)
 
-        # Create elasticsearch group if not existing
-        if ! getent group elasticsearch > /dev/null 2>&1 ; then
-            echo -n "Creating elasticsearch group..."
-            groupadd -r elasticsearch
+        # Create poissonsearch group if not existing
+        if ! getent group poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch group..."
+            groupadd -r poissonsearch
             echo " OK"
         fi
 
-        # Create elasticsearch user if not existing
-        if ! id elasticsearch > /dev/null 2>&1 ; then
-            echo -n "Creating elasticsearch user..."
+        # Create poissonsearch user if not existing
+        if ! id poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch user..."
             useradd --system \
                     --no-create-home \
                     --home-dir /nonexistent \
-                    --gid elasticsearch \
+                    --gid poissonsearch \
                     --shell /sbin/nologin \
-                    --comment "elasticsearch user" \
-                    elasticsearch
+                    --comment "poissonsearch user" \
+                    poissonsearch
             echo " OK"
         fi
     ;;

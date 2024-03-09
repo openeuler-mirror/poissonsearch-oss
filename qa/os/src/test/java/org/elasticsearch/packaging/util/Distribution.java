@@ -109,8 +109,8 @@ public class Distribution {
 
     public enum Flavor {
 
-        OSS("elasticsearch-oss"),
-        DEFAULT("elasticsearch");
+        OSS("poissonsearch"),
+        DEFAULT("poissonsearch");
 
         public final String name;
 

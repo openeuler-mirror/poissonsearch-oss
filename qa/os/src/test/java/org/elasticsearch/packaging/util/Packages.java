@@ -55,8 +55,8 @@ public class Packages {
 
     private static final Logger logger = LogManager.getLogger(Packages.class);
 
-    public static final Path SYSVINIT_SCRIPT = Paths.get("/etc/init.d/elasticsearch");
-    public static final Path SYSTEMD_SERVICE = Paths.get("/usr/lib/systemd/system/elasticsearch.service");
+    public static final Path SYSVINIT_SCRIPT = Paths.get("/etc/init.d/poissonsearch");
+    public static final Path SYSTEMD_SERVICE = Paths.get("/usr/lib/systemd/system/poissonsearch.service");
 
     public static void assertInstalled(Distribution distribution) throws Exception {
         final Result status = packageStatus(distribution);
@@ -170,30 +170,30 @@ public class Packages {
 
     private static void verifyOssInstallation(Installation es, Distribution distribution, Shell sh) {
 
-        sh.run("id elasticsearch");
-        sh.run("getent group elasticsearch");
+        sh.run("id poissonsearch");
+        sh.run("getent group poissonsearch");
 
-        final Result passwdResult = sh.run("getent passwd elasticsearch");
+        final Result passwdResult = sh.run("getent passwd poissonsearch");
         final Path homeDir = Paths.get(passwdResult.stdout.trim().split(":")[5]);
-        assertThat("elasticsearch user home directory must not exist", homeDir, fileDoesNotExist());
+        assertThat("poissonsearch user home directory must not exist", homeDir, fileDoesNotExist());
 
         Stream.of(es.home, es.plugins, es.modules).forEach(dir -> assertThat(dir, file(Directory, "root", "root", p755)));
 
-        Stream.of(es.data, es.logs).forEach(dir -> assertThat(dir, file(Directory, "elasticsearch", "elasticsearch", p750)));
+        Stream.of(es.data, es.logs).forEach(dir -> assertThat(dir, file(Directory, "poissonsearch", "poissonsearch", p750)));
 
         // we shell out here because java's posix file permission view doesn't support special modes
-        assertThat(es.config, file(Directory, "root", "elasticsearch", p750));
+        assertThat(es.config, file(Directory, "root", "poissonsearch", p750));
         assertThat(sh.run("find \"" + es.config + "\" -maxdepth 0 -printf \"%m\"").stdout, containsString("2750"));
 
         final Path jvmOptionsDirectory = es.config.resolve("jvm.options.d");
-        assertThat(jvmOptionsDirectory, file(Directory, "root", "elasticsearch", p750));
+        assertThat(jvmOptionsDirectory, file(Directory, "root", "poissonsearch", p750));
         assertThat(sh.run("find \"" + jvmOptionsDirectory + "\" -maxdepth 0 -printf \"%m\"").stdout, containsString("2750"));
 
         Stream.of("elasticsearch.keystore", "elasticsearch.yml", "jvm.options", "log4j2.properties")
-            .forEach(configFile -> assertThat(es.config(configFile), file(File, "root", "elasticsearch", p660)));
-        assertThat(es.config(".elasticsearch.keystore.initial_md5sum"), file(File, "root", "elasticsearch", p644));
+            .forEach(configFile -> assertThat(es.config(configFile), file(File, "root", "poissonsearch", p660)));
+        assertThat(es.config(".elasticsearch.keystore.initial_md5sum"), file(File, "root", "poissonsearch", p644));
 
-        assertThat(sh.run("sudo -u elasticsearch " + es.bin("elasticsearch-keystore") + " list").stdout, containsString("keystore.seed"));
+        assertThat(sh.run("sudo -u poissonsearch " + es.bin("elasticsearch-keystore") + " list").stdout, containsString("keystore.seed"));
 
         Stream.of(es.bin, es.lib).forEach(dir -> assertThat(dir, file(Directory, "root", "root", p755)));
 
@@ -202,7 +202,7 @@ public class Packages {
 
         Stream.of("NOTICE.txt", "README.asciidoc").forEach(doc -> assertThat(es.home.resolve(doc), file(File, "root", "root", p644)));
 
-        assertThat(es.envFile, file(File, "root", "elasticsearch", p660));
+        assertThat(es.envFile, file(File, "root", "poissonsearch", p660));
 
         if (distribution.packaging == Distribution.Packaging.RPM) {
             assertThat(es.home.resolve("LICENSE.txt"), file(File, "root", "root", p644));
@@ -215,8 +215,8 @@ public class Packages {
         if (isSystemd()) {
             Stream.of(
                 SYSTEMD_SERVICE,
-                Paths.get("/usr/lib/tmpfiles.d/elasticsearch.conf"),
-                Paths.get("/usr/lib/sysctl.d/elasticsearch.conf")
+                Paths.get("/usr/lib/tmpfiles.d/poissonsearch.conf"),
+                Paths.get("/usr/lib/sysctl.d/poissonsearch.conf")
             ).forEach(confFile -> assertThat(confFile, file(File, "root", "root", p644)));
 
             final String sysctlExecutable = (distribution.packaging == Distribution.Packaging.RPM) ? "/usr/sbin/sysctl" : "/sbin/sysctl";
@@ -250,7 +250,7 @@ public class Packages {
         assertThat(es.bin("elasticsearch-sql-cli-" + distribution.version + ".jar"), file(File, "root", "root", p755));
 
         Stream.of("users", "users_roles", "roles.yml", "role_mapping.yml", "log4j2.properties")
-            .forEach(configFile -> assertThat(es.config(configFile), file(File, "root", "elasticsearch", p660)));
+            .forEach(configFile -> assertThat(es.config(configFile), file(File, "root", "poissonsearch", p660)));
     }
 
     /**
@@ -259,37 +259,37 @@ public class Packages {
     public static Shell.Result runElasticsearchStartCommand(Shell sh) throws IOException {
         if (isSystemd()) {
             sh.run("systemctl daemon-reload");
-            sh.run("systemctl enable elasticsearch.service");
-            sh.run("systemctl is-enabled elasticsearch.service");
-            return sh.runIgnoreExitCode("systemctl start elasticsearch.service");
+            sh.run("systemctl enable poissonsearch.service");
+            sh.run("systemctl is-enabled poissonsearch.service");
+            return sh.runIgnoreExitCode("systemctl start poissonsearch.service");
         }
-        return sh.runIgnoreExitCode("service elasticsearch start");
+        return sh.runIgnoreExitCode("service poissonsearch start");
     }
 
     public static void assertElasticsearchStarted(Shell sh, Installation installation) throws Exception {
         waitForElasticsearch(installation);
 
         if (isSystemd()) {
-            sh.run("systemctl is-active elasticsearch.service");
-            sh.run("systemctl status elasticsearch.service");
+            sh.run("systemctl is-active poissonsearch.service");
+            sh.run("systemctl status poissonsearch.service");
         } else {
-            sh.run("service elasticsearch status");
+            sh.run("service poissonsearch status");
         }
     }
 
     public static void stopElasticsearch(Shell sh) {
         if (isSystemd()) {
-            sh.run("systemctl stop elasticsearch.service");
+            sh.run("systemctl stop poissonsearch.service");
         } else {
-            sh.run("service elasticsearch stop");
+            sh.run("service poissonsearch stop");
         }
     }
 
     public static void restartElasticsearch(Shell sh, Installation installation) throws Exception {
         if (isSystemd()) {
-            sh.run("systemctl restart elasticsearch.service");
+            sh.run("systemctl restart poissonsearch.service");
         } else {
-            sh.run("service elasticsearch restart");
+            sh.run("service poissonsearch restart");
         }
         assertElasticsearchStarted(sh, installation);
     }
@@ -318,7 +318,7 @@ public class Packages {
          * for Elasticsearch logs and storing it in class state.
          */
         public void clear() {
-            final String script = "sudo journalctl --unit=elasticsearch.service --lines=0 --show-cursor -o cat | sed -e 's/-- cursor: //'";
+            final String script = "sudo journalctl --unit=poissonsearch.service --lines=0 --show-cursor -o cat | sed -e 's/-- cursor: //'";
             cursor = sh.run(script).stdout.trim();
         }
 
@@ -327,7 +327,7 @@ public class Packages {
          * @return Recent journald logs for the Elasticsearch service.
          */
         public Result getLogs() {
-            return sh.run("journalctl -u elasticsearch.service --after-cursor='" + this.cursor + "'");
+            return sh.run("journalctl -u poissonsearch.service --after-cursor='" + this.cursor + "'");
         }
     }
 

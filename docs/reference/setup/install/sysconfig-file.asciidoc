@@ -25,7 +25,7 @@
 
     Configuration file directory (which needs to include `elasticsearch.yml`,
     `jvm.options`, and `log4j2.properties` files); defaults to
-    `/etc/elasticsearch`.
+    `/etc/poissonsearch`.
 
 `ES_JAVA_OPTS`::
 

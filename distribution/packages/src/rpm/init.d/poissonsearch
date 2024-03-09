@@ -1,19 +1,19 @@
 #!/bin/bash
 #
-# elasticsearch <summary>
+# poissonsearch <summary>
 #
 # chkconfig:   2345 80 20
-# description: Starts and stops a single elasticsearch instance on this system
+# description: Starts and stops a single poissonsearch instance on this system
 #
 
 ### BEGIN INIT INFO
-# Provides: Elasticsearch
+# Provides: Poissonsearch
 # Required-Start: $network $named
 # Required-Stop: $network $named
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: This service manages the elasticsearch daemon
-# Description: Elasticsearch is a very scalable, schema-free and high-performance search solution supporting multi-tenancy and near realtime search.
+# Short-Description: This service manages the poissonsearch daemon
+# Description: Poissonsearch is a very scalable, schema-free and high-performance search solution supporting multi-tenancy and near realtime search.
 ### END INIT INFO
 
 #
@@ -31,13 +31,13 @@ if [ -f /etc/rc.d/init.d/functions ]; then
     . /etc/rc.d/init.d/functions
 fi
 
-# Sets the default values for elasticsearch variables used in this script
-ES_HOME="/usr/share/elasticsearch"
+# Sets the default values for poissonsearch variables used in this script
+ES_HOME="/usr/share/poissonsearch"
 MAX_OPEN_FILES=65535
 MAX_MAP_COUNT=262144
 ES_PATH_CONF="${path.conf}"
 
-PID_DIR="/var/run/elasticsearch"
+PID_DIR="/var/run/poissonsearch"
 
 # Source the default env file
 ES_ENV_FILE="${path.env}"
@@ -47,13 +47,13 @@ fi
 
 # ES_USER and ES_GROUP settings were removed
 if [ ! -z "$ES_USER" ] || [ ! -z "$ES_GROUP" ]; then
-    echo "ES_USER and ES_GROUP settings are no longer supported. To run as a custom user/group use the archive distribution of Elasticsearch."
+    echo "ES_USER and ES_GROUP settings are no longer supported. To run as a custom user/group use the archive distribution of Poissonsearch."
     exit 1
 fi
 
 exec="$ES_HOME/bin/elasticsearch"
-prog="elasticsearch"
-pidfile="$PID_DIR/${prog}.pid"
+prog="poissonsearch"
+pidfile="$PID_DIR/poissonsearch.pid"
 
 export ES_JAVA_OPTS
 export JAVA_HOME
@@ -63,7 +63,7 @@ export ES_STARTUP_SLEEP_TIME
 lockfile=/var/lock/subsys/$prog
 
 if [ ! -x "$exec" ]; then
-    echo "The elasticsearch startup script does not exists or it is not executable, tried: $exec"
+    echo "The poissonsearch startup script does not exists or it is not executable, tried: $exec"
     exit 1
 fi
 
@@ -82,16 +82,16 @@ start() {
 
     # Ensure that the PID_DIR exists (it is cleaned at OS startup time)
     if [ -n "$PID_DIR" ] && [ ! -e "$PID_DIR" ]; then
-        mkdir -p "$PID_DIR" && chown elasticsearch:elasticsearch "$PID_DIR"
+        mkdir -p "$PID_DIR" && chown poissonsearch:poissonsearch "$PID_DIR"
     fi
     if [ -n "$pidfile" ] && [ ! -e "$pidfile" ]; then
-        touch "$pidfile" && chown elasticsearch:elasticsearch "$pidfile"
+        touch "$pidfile" && chown poissonsearch:poissonsearch "$pidfile"
     fi
 
     cd $ES_HOME
     echo -n $"Starting $prog: "
     # if not running, start it up here, usually something like "daemon $exec"
-    daemon --user elasticsearch --pidfile $pidfile $exec -p $pidfile -d
+    daemon --user poissonsearch --pidfile $pidfile $exec -p $pidfile -d
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile

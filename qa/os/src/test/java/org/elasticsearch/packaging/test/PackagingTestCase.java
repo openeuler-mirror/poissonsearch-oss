@@ -371,7 +371,7 @@ public abstract class PackagingTestCase extends Assert {
         } else if (distribution().isPackage() && Platforms.isSystemd()) {
 
             // For systemd, retrieve the error from journalctl
-            assertThat(result.stderr, containsString("Job for elasticsearch.service failed"));
+            assertThat(result.stderr, containsString("Job for poissonsearch.service failed"));
             Shell.Result error = journaldWrapper.getLogs();
             assertThat(error.stdout, anyOf(stringMatchers));
 

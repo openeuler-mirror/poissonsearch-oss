@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 public class Installation {
 
     // in the future we'll run as a role user on Windows
-    public static final String ARCHIVE_OWNER = Platforms.WINDOWS ? System.getenv("username") : "elasticsearch";
+    public static final String ARCHIVE_OWNER = Platforms.WINDOWS ? System.getenv("username") : "poissonsearch";
 
     private final Shell sh;
     public final Distribution distribution;
@@ -89,25 +89,25 @@ public class Installation {
     public static Installation ofPackage(Shell sh, Distribution distribution) {
 
         final Path envFile = (distribution.packaging == Distribution.Packaging.RPM)
-            ? Paths.get("/etc/sysconfig/elasticsearch")
-            : Paths.get("/etc/default/elasticsearch");
+            ? Paths.get("/etc/sysconfig/poissonsearch")
+            : Paths.get("/etc/default/poissonsearch");
 
         return new Installation(
             sh,
             distribution,
-            Paths.get("/usr/share/elasticsearch"),
-            Paths.get("/etc/elasticsearch"),
-            Paths.get("/var/lib/elasticsearch"),
-            Paths.get("/var/log/elasticsearch"),
-            Paths.get("/usr/share/elasticsearch/plugins"),
-            Paths.get("/usr/share/elasticsearch/modules"),
-            Paths.get("/var/run/elasticsearch"),
+            Paths.get("/usr/share/poissonsearch"),
+            Paths.get("/etc/poissonsearch"),
+            Paths.get("/var/lib/poissonsearch"),
+            Paths.get("/var/log/poissonsearch"),
+            Paths.get("/usr/share/poissonsearch/plugins"),
+            Paths.get("/usr/share/poissonsearch/modules"),
+            Paths.get("/var/run/poissonsearch"),
             envFile
         );
     }
 
     public static Installation ofContainer(Shell sh, Distribution distribution) {
-        String root = "/usr/share/elasticsearch";
+        String root = "/usr/share/poissonsearch";
         return new Installation(
             sh,
             distribution,

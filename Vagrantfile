@@ -37,10 +37,10 @@ Vagrant.configure(2) do |config|
   end
 
   # Switch the default share for the project root from /vagrant to
-  # /elasticsearch because /vagrant is confusing when there is a project inside
-  # the elasticsearch project called vagrant....
+  # /poissonsearch because /vagrant is confusing when there is a project inside
+  # the poissonsearch project called vagrant....
   config.vm.synced_folder '.', '/vagrant', disabled: true
-  config.vm.synced_folder '.', '/elasticsearch'
+  config.vm.synced_folder '.', '/poissonsearch'
   # TODO: make these syncs work for windows!!!
   config.vm.synced_folder "#{Dir.home}/.vagrant/gradle/caches/jars-3", "/root/.gradle/caches/jars-3",
       create: true,
@@ -376,6 +376,7 @@ def linux_common(config,
   # same VM from messing up the current test
   config.vm.provision 'clean es installs in tmp', run: 'always', type: 'shell', inline: <<-SHELL
     rm -rf /tmp/elasticsearch*
+    rm -rf /tmp/poissonsearch*
   SHELL
 
   sh_set_prompt config, name
@@ -394,18 +395,18 @@ end
 # them by re-source-ing the standard prompt file.
 def sh_set_prompt(config, name)
   config.vm.provision 'set prompt', type: 'shell', inline: <<-SHELL
-      cat \<\<PROMPT > /etc/profile.d/elasticsearch_prompt.sh
+      cat \<\<PROMPT > /etc/profile.d/poissonsearch_prompt.sh
 export PS1='#{name}:\\w$ '
 PROMPT
-      grep 'source /etc/profile.d/elasticsearch_prompt.sh' ~/.bashrc |
+      grep 'source /etc/profile.d/poissonsearch_prompt.sh' ~/.bashrc |
         cat \<\<SOURCE_PROMPT >> ~/.bashrc
 # Replace the standard prompt with a consistent one
-source /etc/profile.d/elasticsearch_prompt.sh
+source /etc/profile.d/poissonsearch_prompt.sh
 SOURCE_PROMPT
-      grep 'source /etc/profile.d/elasticsearch_prompt.sh' ~vagrant/.bashrc |
+      grep 'source /etc/profile.d/poissonsearch_prompt.sh' ~vagrant/.bashrc |
         cat \<\<SOURCE_PROMPT >> ~vagrant/.bashrc
 # Replace the standard prompt with a consistent one
-source /etc/profile.d/elasticsearch_prompt.sh
+source /etc/profile.d/poissonsearch_prompt.sh
 SOURCE_PROMPT
   SHELL
 end
@@ -468,11 +469,11 @@ def sh_install_deps(config,
     ensure rsync
     ensure expect
 
-    cat \<\<SUDOERS_VARS > /etc/sudoers.d/elasticsearch_vars
+    cat \<\<SUDOERS_VARS > /etc/sudoers.d/poissonsearch_vars
 Defaults   env_keep += "JAVA_HOME"
 Defaults   env_keep += "SYSTEM_JAVA_HOME"
 SUDOERS_VARS
-    chmod 0440 /etc/sudoers.d/elasticsearch_vars
+    chmod 0440 /etc/sudoers.d/poissonsearch_vars
   SHELL
 end
 

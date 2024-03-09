@@ -82,7 +82,7 @@ public class PackageTests extends PackagingTestCase {
     public void test30DaemonIsNotEnabledOnRestart() {
         if (isSystemd()) {
             sh.run("systemctl daemon-reload");
-            String isEnabledOutput = sh.runIgnoreExitCode("systemctl is-enabled elasticsearch.service").stdout.trim();
+            String isEnabledOutput = sh.runIgnoreExitCode("systemctl is-enabled poissonsearch.service").stdout.trim();
             assertThat(isEnabledOutput, equalTo("disabled"));
         }
     }
@@ -165,7 +165,7 @@ public class PackageTests extends PackagingTestCase {
         startElasticsearch();
 
         String journalEntries = sh.runIgnoreExitCode(
-            "journalctl _SYSTEMD_UNIT=elasticsearch.service "
+            "journalctl _SYSTEMD_UNIT=poissonsearch.service "
                 + "--since \""
                 + start
                 + "\" --output cat | grep -v \"future versions of Elasticsearch will require Java 11\" | wc -l"
@@ -212,8 +212,8 @@ public class PackageTests extends PackagingTestCase {
                 statusExitCode = version < 231 ? 3 : 4;
             }
 
-            assertThat(sh.runIgnoreExitCode("systemctl status elasticsearch.service").exitCode, is(statusExitCode));
-            assertThat(sh.runIgnoreExitCode("systemctl is-enabled elasticsearch.service").exitCode, is(1));
+            assertThat(sh.runIgnoreExitCode("systemctl status poissonsearch.service").exitCode, is(statusExitCode));
+            assertThat(sh.runIgnoreExitCode("systemctl is-enabled poissonsearch.service").exitCode, is(1));
 
         }
 

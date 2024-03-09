@@ -13,10 +13,10 @@
 [[systemd-service-file-config]]
 ==== systemd service file is no longer configuration
 
-The systemd service file `/usr/lib/systemd/system/elasticsearch.service`
+The systemd service file `/usr/lib/systemd/system/poissonsearch.service`
 was previously marked as a configuration file in rpm and deb packages.
-Overrides to the systemd elasticsearch service should be made
-in `/etc/systemd/system/elasticsearch.service.d/override.conf`.
+Overrides to the systemd poissonsearch service should be made
+in `/etc/systemd/system/poissonsearch.service.d/override.conf`.
 
 [discrete]
 ==== tar package no longer includes windows specific files

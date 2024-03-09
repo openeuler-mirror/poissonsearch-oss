@@ -17,11 +17,11 @@ install the default distribution of {es}:
 
 [source,sh]
 -------------------------
-brew install elastic/tap/elasticsearch-full
+brew install elastic/tap/poissonsearch-full
 -------------------------
 
 This installs the most recently released default distribution of {es}.
-To install the OSS distribution, specify `elastic/tap/elasticsearch-oss`.
+To install the OSS distribution, specify `elastic/tap/poissonsearch`.
 
 [[brew-layout]]
 ==== Directory layout for Homebrew installs
@@ -33,35 +33,35 @@ and data directory are stored in the following locations.
 |=======================================================================
 | Type | Description | Default Location | Setting
 | home
-  | Elasticsearch home directory or `$ES_HOME`
-  | /usr/local/var/homebrew/linked/elasticsearch-full
+  | Poissonsearch home directory or `$ES_HOME`
+  | /usr/local/var/homebrew/linked/poissonsearch-full
  d|
 
 | bin
   | Binary scripts including `elasticsearch` to start a node
     and `elasticsearch-plugin` to install plugins
-  | /usr/local/var/homebrew/linked/elasticsearch-full/bin
+  | /usr/local/var/homebrew/linked/poissonsearch-full/bin
  d|
 
 | conf
   | Configuration files including `elasticsearch.yml`
-  | /usr/local/etc/elasticsearch
+  | /usr/local/etc/poissonsearch
   | <<config-files-location,ES_PATH_CONF>>
 
 | data
   | The location of the data files of each index / shard allocated
     on the node. Can hold multiple locations.
-  | /usr/local/var/lib/elasticsearch
+  | /usr/local/var/lib/poissonsearch
   | path.data
 
 | logs
   | Log files location.
-  | /usr/local/var/log/elasticsearch
+  | /usr/local/var/log/poissonsearch
   | path.logs
 
 | plugins
   | Plugin files location. Each plugin will be contained in a subdirectory.
-  | /usr/local/var/homebrew/linked/elasticsearch/plugins
+  | /usr/local/var/homebrew/linked/poissonsearch/plugins
   |
 
 |=======================================================================

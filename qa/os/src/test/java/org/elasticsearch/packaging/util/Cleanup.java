@@ -36,18 +36,18 @@ import static org.elasticsearch.packaging.util.Platforms.isSystemd;
 public class Cleanup {
 
     private static final List<String> ELASTICSEARCH_FILES_LINUX = Arrays.asList(
-        "/usr/share/elasticsearch",
-        "/etc/elasticsearch/elasticsearch.keystore",
-        "/etc/elasticsearch",
-        "/var/lib/elasticsearch",
-        "/var/log/elasticsearch",
-        "/etc/default/elasticsearch",
-        "/etc/sysconfig/elasticsearch",
-        "/var/run/elasticsearch",
-        "/usr/share/doc/elasticsearch",
-        "/usr/lib/systemd/system/elasticsearch.conf",
-        "/usr/lib/tmpfiles.d/elasticsearch.conf",
-        "/usr/lib/sysctl.d/elasticsearch.conf"
+        "/usr/share/poissonsearch",
+        "/etc/poissonsearch/elasticsearch.keystore",
+        "/etc/poissonsearch",
+        "/var/lib/poissonsearch",
+        "/var/log/poissonsearch",
+        "/etc/default/poissonsearch",
+        "/etc/sysconfig/poissonsearch",
+        "/var/run/poissonsearch",
+        "/usr/share/doc/poissonsearch",
+        "/usr/lib/systemd/system/poissonsearch.conf",
+        "/usr/lib/tmpfiles.d/poissonsearch.conf",
+        "/usr/lib/sysctl.d/poissonsearch.conf"
     );
 
     // todo
@@ -56,9 +56,9 @@ public class Cleanup {
     public static void cleanEverything() throws Exception {
         final Shell sh = new Shell();
 
-        // kill elasticsearch processes
+        // kill poissonsearch processes
         Platforms.onLinux(() -> {
-            sh.runIgnoreExitCode("pkill -u elasticsearch");
+            sh.runIgnoreExitCode("pkill -u poissonsearch");
             sh.runIgnoreExitCode("ps aux | grep -i 'org.elasticsearch.bootstrap.Elasticsearch' | awk {'print $2'} | xargs kill -9");
         });
 
@@ -75,21 +75,21 @@ public class Cleanup {
 
         Platforms.onLinux(Cleanup::purgePackagesLinux);
 
-        // remove elasticsearch users
+        // remove poissonsearch users
         Platforms.onLinux(() -> {
-            sh.runIgnoreExitCode("userdel elasticsearch");
-            sh.runIgnoreExitCode("groupdel elasticsearch");
+            sh.runIgnoreExitCode("userdel poissonsearch");
+            sh.runIgnoreExitCode("groupdel poissonsearch");
         });
         // when we run es as a role user on windows, add the equivalent here
 
         // delete files that may still exist
-        lsGlob(getRootTempDir(), "elasticsearch*").forEach(FileUtils::rm);
+        lsGlob(getRootTempDir(), "poissonsearch*").forEach(FileUtils::rm);
         final List<String> filesToDelete = Platforms.WINDOWS ? ELASTICSEARCH_FILES_WINDOWS : ELASTICSEARCH_FILES_LINUX;
         // windows needs leniency due to asinine releasing of file locking async from a process exiting
         Consumer<? super Path> rm = Platforms.WINDOWS ? FileUtils::rmWithRetries : FileUtils::rm;
         filesToDelete.stream().map(Paths::get).filter(Files::exists).forEach(rm);
 
-        // disable elasticsearch service
+        // disable poissonsearch service
         // todo add this for windows when adding tests for service intallation
         if (Platforms.LINUX && isSystemd()) {
             sh.run("systemctl unmask systemd-sysctl.service");
@@ -101,13 +101,13 @@ public class Cleanup {
 
         if (isRPM()) {
             // Doing rpm erase on both packages in one command will remove neither since both cannot be installed
-            // this may leave behind config files in /etc/elasticsearch, but a later step in this cleanup will get them
-            sh.runIgnoreExitCode("rpm --quiet -e elasticsearch");
-            sh.runIgnoreExitCode("rpm --quiet -e elasticsearch-oss");
+            // this may leave behind config files in /etc/poissonsearch, but a later step in this cleanup will get them
+            sh.runIgnoreExitCode("rpm --quiet -e poissonsearch");
+            sh.runIgnoreExitCode("rpm --quiet -e poissonsearch-oss");
         }
 
         if (isDPKG()) {
-            sh.runIgnoreExitCode("dpkg --purge elasticsearch elasticsearch-oss");
+            sh.runIgnoreExitCode("dpkg --purge poissonsearch poissonsearch-oss");
         }
     }
 }

@@ -409,14 +409,14 @@ file an absolute path or a path relative to `$ES_HOME` as follows:
 
 [source,yaml]
 ----
-path.data:  /var/elasticsearch/data
+path.data:  /var/poissonsearch/data
 ----
 
 Like all node settings, it can also be specified on the command line as:
 
 [source,sh]
 ----
-./bin/elasticsearch -Epath.data=/var/elasticsearch/data
+./bin/elasticsearch -Epath.data=/var/poissonsearch/data
 ----
 
 TIP: When using the `.zip` or `.tar.gz` distributions, the `path.data` setting

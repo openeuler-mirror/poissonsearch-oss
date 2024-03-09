@@ -511,11 +511,11 @@ configure(subprojects.findAll { ['archives', 'packages'].contains(it.name) }) {
  *  <dt>path.conf</dt>
  *  <dd>The default directory from which to load configuration. This is used in
  *    the packaging scripts, but in that context it is always
- *    /etc/elasticsearch. Its also used in bin/elasticsearch-plugin, where it is
- *    /etc/elasticsearch for the os packages but $ESHOME/config otherwise.</dd>
+ *    /etc/poissonsearch. Its also used in bin/elasticsearch-plugin, where it is
+ *    /etc/poissonsearch for the os packages but $ESHOME/config otherwise.</dd>
  *  <dt>path.env</dt>
  *  <dd>The env file sourced before bin/elasticsearch to set environment
- *    variables. Think /etc/defaults/elasticsearch.</dd>
+ *    variables. Think /etc/defaults/poissonsearch.</dd>
  *  <dt>heap.min and heap.max</dt>
  *  <dd>Default min and max heap</dd>
  *  <dt>scripts.footer</dt>
@@ -530,8 +530,8 @@ configure(subprojects.findAll { ['archives', 'packages'].contains(it.name) }) {
 subprojects {
   ext.expansionsForDistribution = { distributionType, oss, jdk ->
     final String defaultHeapSize = "1g"
-    final String packagingPathData = "path.data: /var/lib/elasticsearch"
-    final String pathLogs = "/var/log/elasticsearch"
+    final String packagingPathData = "path.data: /var/lib/poissonsearch"
+    final String pathLogs = "/var/log/poissonsearch"
     final String packagingPathLogs = "path.logs: ${pathLogs}"
     final String packagingLoggc = "${pathLogs}/gc.log"
 
@@ -547,8 +547,8 @@ subprojects {
       'project.version': version,
 
       'path.conf': [
-        'deb': '/etc/elasticsearch',
-        'rpm': '/etc/elasticsearch',
+        'deb': '/etc/poissonsearch',
+        'rpm': '/etc/poissonsearch',
         'def': '"$ES_HOME"/config'
       ],
       'path.data': [
@@ -557,15 +557,15 @@ subprojects {
         'def': '#path.data: /path/to/data'
       ],
       'path.env': [
-        'deb': '/etc/default/elasticsearch',
-        'rpm': '/etc/sysconfig/elasticsearch',
+        'deb': '/etc/default/poissonsearch',
+        'rpm': '/etc/sysconfig/poissonsearch',
         /* There isn't one of these files for tar or zip but its important to
           make an empty string here so the script can properly skip it. */
         'def': 'if [ -z "$ES_PATH_CONF" ]; then ES_PATH_CONF="$ES_HOME"/config; done',
       ],
       'source.path.env': [
-        'deb': 'source /etc/default/elasticsearch',
-        'rpm': 'source /etc/sysconfig/elasticsearch',
+        'deb': 'source /etc/default/poissonsearch',
+        'rpm': 'source /etc/sysconfig/poissonsearch',
         'def': 'if [ -z "$ES_PATH_CONF" ]; then ES_PATH_CONF="$ES_HOME"/config; fi',
       ],
       'path.logs': [
@@ -583,14 +583,14 @@ subprojects {
       'heap.max': defaultHeapSize,
 
       'heap.dump.path': [
-        'deb': "-XX:HeapDumpPath=/var/lib/elasticsearch",
-        'rpm': "-XX:HeapDumpPath=/var/lib/elasticsearch",
+        'deb': "-XX:HeapDumpPath=/var/lib/poissonsearch",
+        'rpm': "-XX:HeapDumpPath=/var/lib/poissonsearch",
         'def': "-XX:HeapDumpPath=data"
       ],
 
       'error.file': [
-        'deb': "-XX:ErrorFile=/var/log/elasticsearch/hs_err_pid%p.log",
-        'rpm': "-XX:ErrorFile=/var/log/elasticsearch/hs_err_pid%p.log",
+        'deb': "-XX:ErrorFile=/var/log/poissonsearch/hs_err_pid%p.log",
+        'rpm': "-XX:ErrorFile=/var/log/poissonsearch/hs_err_pid%p.log",
         'def': "-XX:ErrorFile=logs/hs_err_pid%p.log"
       ],
 
