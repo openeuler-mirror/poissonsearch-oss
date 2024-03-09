@@ -120,4 +120,15 @@ public class ScriptProcessorTests extends ESTestCase {
         processor.execute(ingestDocument);
         assertWarnings("[types removal] Looking up doc types [_type] in scripts is deprecated.");
     }
+
+    public void testScriptingWithSelfReferencingSourceMetadata() {
+        ScriptProcessor processor = new ScriptProcessor(randomAlphaOfLength(10), null, script, null, scriptService);
+        IngestDocument originalIngestDocument = randomDocument();
+        String index = originalIngestDocument.getSourceAndMetadata().get(IngestDocument.Metadata.INDEX.getFieldName()).toString();
+        String id = originalIngestDocument.getSourceAndMetadata().get(IngestDocument.Metadata.ID.getFieldName()).toString();
+        Map<String, Object> sourceMetadata = originalIngestDocument.getSourceAndMetadata();
+        originalIngestDocument.getSourceAndMetadata().put("_source", sourceMetadata);
+        IngestDocument ingestDocument = new IngestDocument(index, null, id, null, null, null, originalIngestDocument.getSourceAndMetadata());
+        expectThrows(IllegalArgumentException.class, () -> processor.execute(ingestDocument));
+    }
 }

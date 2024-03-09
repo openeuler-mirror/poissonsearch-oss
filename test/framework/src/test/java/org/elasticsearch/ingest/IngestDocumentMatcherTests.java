@@ -79,4 +79,17 @@ public class IngestDocumentMatcherTests extends ESTestCase {
         expectThrows(AssertionError.class, () -> assertIngestDocument(document1, document2));
         expectThrows(AssertionError.class, () -> assertIngestDocument(document2, document1));
     }
+
+    public void testNestedMapArrayEquivalence() {
+        IngestDocument ingestDocument = new IngestDocument(new HashMap<>(), new HashMap<>());
+        // Test that equality still works when the ingest document uses primitive arrays,
+        // since normal .equals() methods would not work for Maps containing these arrays.
+        byte[] numbers = new byte[] { 0, 1, 2 };
+        ingestDocument.setFieldValue("some.nested.array", numbers);
+        IngestDocument copy = new IngestDocument(ingestDocument);
+        byte[] copiedNumbers = copy.getFieldValue("some.nested.array", byte[].class);
+        assertArrayEquals(numbers, copiedNumbers);
+        assertNotEquals(numbers, copiedNumbers);
+        assertIngestDocument(ingestDocument, copy);
+    }
 }

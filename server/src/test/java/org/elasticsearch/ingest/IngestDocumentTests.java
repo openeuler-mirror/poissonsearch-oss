@@ -1057,4 +1057,37 @@ public class IngestDocumentTests extends ESTestCase {
         }
     }
 
+    public void testSelfReferencingSource() {
+        Map<String, Object> value = new HashMap<>();
+        value.put("foo", value);
+        expectThrows(IllegalArgumentException.class, () -> IngestDocument.deepCopyMap(value));
+    }
+
+    public void testDeepCopyCtor() {
+        IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
+        ingestDocument.setFieldValue("_index", "foo1");
+        ingestDocument.setFieldValue("_id", "bar1");
+        ingestDocument.setFieldValue("hello", "world1");
+        IngestDocument copy = new IngestDocument(ingestDocument);
+        assertIngestDocument(ingestDocument, copy);
+
+        copy.setFieldValue("_index", "foo2");
+        copy.setFieldValue("_id", "bar2");
+        copy.setFieldValue("hello", "world2");
+
+        assertThat(ingestDocument.getFieldValue("_index", String.class), equalTo("foo1"));
+        assertThat(ingestDocument.getFieldValue("_id", String.class), equalTo("bar1"));
+        assertThat(ingestDocument.getFieldValue("hello", String.class), equalTo("world1"));
+    }
+
+    public void testSelfReference() {
+        IngestDocument ingestDocument = RandomDocumentPicks.randomIngestDocument(random());
+        List<Object> list = new ArrayList<>();
+        list.add("a b c");
+        list.add(list);
+        ingestDocument.setFieldValue("self-ref-list", list);
+        Exception e = expectThrows(IllegalArgumentException.class, () -> new IngestDocument(ingestDocument));
+        assertThat(e.getMessage(), containsString("Iterable object is self-referencing itself"));
+    }
+
 }

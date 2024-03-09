@@ -45,6 +45,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import static org.elasticsearch.common.util.CollectionUtils.ensureNoSelfReferences;
+
 /**
  * Represents a single document being captured before indexing and holds the source and metadata (like id, type and index).
  */
@@ -696,6 +698,7 @@ public final class IngestDocument {
 
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> deepCopyMap(Map<K, V> source) {
+        ensureNoSelfReferences(source, "IngestDocument: Self reference present in object.");
         return (Map<K, V>) deepCopy(source);
     }
 
