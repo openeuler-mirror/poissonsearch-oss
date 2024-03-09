@@ -102,7 +102,6 @@ ECHO.!KEYSTORE_PASSWORD!| %JAVA% %ES_JAVA_OPTS% -Delasticsearch ^
   -Des.distribution.flavor="%ES_DISTRIBUTION_FLAVOR%" ^
   -Des.distribution.type="%ES_DISTRIBUTION_TYPE%" ^
   -Des.bundled_jdk="%ES_BUNDLED_JDK%" ^
-  -Dlog4j2.formatMsgNoLookups="true" ^
   -cp "%ES_CLASSPATH%" "org.elasticsearch.bootstrap.Elasticsearch" !newparams!
 
 endlocal
