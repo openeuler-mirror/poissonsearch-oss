@@ -19,6 +19,8 @@
 
 package org.elasticsearch.action.admin.cluster.stats;
 
+import org.elasticsearch.common.collect.SameOrderObjectObjectHashMap;
+
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 
@@ -51,7 +53,7 @@ public class ClusterStatsIndices implements ToXContentFragment {
     public ClusterStatsIndices(List<ClusterStatsNodeResponse> nodeResponses,
             MappingStats mappingStats,
             AnalysisStats analysisStats) {
-        ObjectObjectHashMap<String, ShardStats> countsPerIndex = new ObjectObjectHashMap<>();
+        ObjectObjectHashMap<String, ShardStats> countsPerIndex = new SameOrderObjectObjectHashMap<>();
 
         this.docs = new DocsStats();
         this.store = new StoreStats();

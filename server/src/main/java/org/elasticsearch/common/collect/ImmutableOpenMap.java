@@ -193,7 +193,7 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
     }
 
     @SuppressWarnings("unchecked")
-    private static final ImmutableOpenMap EMPTY = new ImmutableOpenMap(new ObjectObjectHashMap());
+    private static final ImmutableOpenMap EMPTY = new ImmutableOpenMap(new SameOrderObjectObjectHashMap());
 
     @SuppressWarnings("unchecked")
     public static <KType, VType> ImmutableOpenMap<KType, VType> of() {
@@ -230,7 +230,7 @@ public final class ImmutableOpenMap<KType, VType> implements Iterable<ObjectObje
         }
 
         public Builder(int size) {
-            this.map = new ObjectObjectHashMap<>(size);
+            this.map = new SameOrderObjectObjectHashMap<>(size);
         }
 
         public Builder(ImmutableOpenMap<KType, VType> map) {

@@ -191,7 +191,7 @@ public final class ImmutableOpenIntMap<VType> implements Iterable<IntObjectCurso
     }
 
     @SuppressWarnings("unchecked")
-    private static final ImmutableOpenIntMap EMPTY = new ImmutableOpenIntMap(new IntObjectHashMap());
+    private static final ImmutableOpenIntMap EMPTY = new ImmutableOpenIntMap(new SameOrderIntObjectHashMap());
 
     @SuppressWarnings("unchecked")
     public static <VType> ImmutableOpenIntMap<VType> of() {
@@ -220,7 +220,7 @@ public final class ImmutableOpenIntMap<VType> implements Iterable<IntObjectCurso
         }
 
         public Builder(int size) {
-            this.map = new IntObjectHashMap<>(size);
+            this.map = new SameOrderIntObjectHashMap<>(size);
         }
 
         public Builder(ImmutableOpenIntMap<VType> map) {
