@@ -92,7 +92,9 @@ public class GlobalBuildInfoPlugin implements Plugin<Project> {
         JavaVersion minimumCompilerVersion = JavaVersion.toVersion(Util.getResourceContents("/minimumCompilerVersion"));
         JavaVersion minimumRuntimeVersion = JavaVersion.toVersion(Util.getResourceContents("/minimumRuntimeVersion"));
 
-        File runtimeJavaHome = findRuntimeJavaHome();
+        File originRuntimeJavaHome = findRuntimeJavaHome();
+        boolean isRuntimeJavaHomeSet = originRuntimeJavaHome != null;
+        File runtimeJavaHome = isRuntimeJavaHomeSet ? originRuntimeJavaHome : Jvm.current().getJavaHome();
 
         File rootDir = project.getRootDir();
         GitInfo gitInfo = gitInfo(rootDir);
@@ -104,7 +106,7 @@ public class GlobalBuildInfoPlugin implements Plugin<Project> {
             params.reset();
             params.setRuntimeJavaHome(runtimeJavaHome);
             params.setRuntimeJavaVersion(determineJavaVersion("runtime java.home", runtimeJavaHome, minimumRuntimeVersion));
-            params.setIsRutimeJavaHomeSet(Jvm.current().getJavaHome().equals(runtimeJavaHome) == false);
+            params.setIsRutimeJavaHomeSet(isRuntimeJavaHomeSet);
             params.setRuntimeJavaDetails(getJavaInstallation(runtimeJavaHome).getDisplayName());
             params.setJavaVersions(getAvailableJavaVersions(minimumCompilerVersion));
             params.setMinimumCompilerVersion(minimumCompilerVersion);
@@ -247,7 +249,11 @@ public class GlobalBuildInfoPlugin implements Plugin<Project> {
             return new File(findJavaHome(runtimeJavaProperty));
         }
 
-        return System.getenv("RUNTIME_JAVA_HOME") == null ? Jvm.current().getJavaHome() : new File(System.getenv("RUNTIME_JAVA_HOME"));
+        runtimeJavaProperty = System.getenv("RUNTIME_JAVA_HOME");
+        if (runtimeJavaProperty != null) {
+            return new File(runtimeJavaProperty);
+        }
+        return null;
     }
 
     private static String findJavaHome(String version) {
