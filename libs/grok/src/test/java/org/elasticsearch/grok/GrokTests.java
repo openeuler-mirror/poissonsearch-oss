@@ -348,6 +348,17 @@ public class GrokTests extends ESTestCase {
             "via patterns [NAME2=>NAME3=>NAME4]", e.getMessage());
     }
 
+    public void testCircularSelfReference() {
+        Exception e = expectThrows(IllegalArgumentException.class, () -> {
+            Map<String, String> bank = new HashMap<>();
+            bank.put("ANOTHER", "%{INT}");
+            bank.put("INT", "%{INT}");
+            String pattern = "does_not_matter";
+            new Grok(bank, pattern, false, logger::warn);
+        });
+        assertEquals("circular reference in pattern [INT][%{INT}]", e.getMessage());
+    }
+
     public void testBooleanCaptures() {
         String pattern = "%{WORD:name}=%{WORD:status:boolean}";
         Grok g = new Grok(Grok.BUILTIN_PATTERNS, pattern, logger::warn);

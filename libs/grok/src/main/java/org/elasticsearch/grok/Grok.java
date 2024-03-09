@@ -119,7 +119,21 @@ public final class Grok {
      * check for a circular reference.
      */
     private void forbidCircularReferences(String patternName, List<String> path, String pattern) {
-        if (pattern.contains("%{" + patternName + "}") || pattern.contains("%{" + patternName + ":")) {
+        // first ensure that the pattern bank contains no simple circular references (i.e., any pattern
+        // containing an immediate reference to itself) as those can cause the remainder of this algorithm
+        // to recurse infinitely
+        for (Map.Entry<String, String> entry : patternBank.entrySet()) {
+            if (patternReferencesItself(entry.getValue(), entry.getKey())) {
+                throw new IllegalArgumentException("circular reference in pattern [" + entry.getKey() + "][" + entry.getValue() + "]");
+            }
+        }
+
+        // next recursively check any other pattern names referenced in the pattern
+        innerForbidCircularReferences(patternName, path, pattern);
+    }
+
+    private void innerForbidCircularReferences(String patternName, List<String> path, String pattern) {
+        if (patternReferencesItself(pattern, patternName)) {
             String message;
             if (path.isEmpty()) {
                 message = "circular reference in pattern [" + patternName + "][" + pattern + "]";
@@ -152,6 +166,10 @@ public final class Grok {
             path.add(otherPatternName);
             forbidCircularReferences(patternName, path, patternBank.get(otherPatternName));
         }
+    }
+
+    private static boolean patternReferencesItself(String pattern, String patternName) {
+        return pattern.contains("%{" + patternName + "}") || pattern.contains("%{" + patternName + ":");
     }
 
     private String groupMatch(String name, Region region, String pattern) {
