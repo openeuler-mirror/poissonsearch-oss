@@ -57,8 +57,6 @@ public class PasswordToolsTests extends PackagingTestCase {
         install();
 
         List<String> lines = new ArrayList<>();
-        lines.add("xpack.license.self_generated.type: trial");
-        lines.add("xpack.security.enabled: true");
 
         Files.write(installation.config("elasticsearch.yml"), lines, StandardOpenOption.APPEND);
     }
