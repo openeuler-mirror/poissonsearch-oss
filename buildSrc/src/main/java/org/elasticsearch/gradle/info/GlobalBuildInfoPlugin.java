@@ -119,7 +119,7 @@ public class GlobalBuildInfoPlugin implements Plugin<Project> {
             params.setIsInternal(isInternal);
             params.setDefaultParallel(findDefaultParallel(project));
             params.setInFipsJvm(Util.getBooleanProperty("tests.fips.enabled", false));
-            params.setIsSnapshotBuild(Util.getBooleanProperty("build.snapshot", true));
+            params.setIsSnapshotBuild(Util.getBooleanProperty("build.snapshot", false));
             if (isInternal) {
                 params.setBwcVersions(resolveBwcVersions(rootDir));
             }
