@@ -36,6 +36,7 @@ plugins {
   id 'lifecycle-base'
   id 'elasticsearch.docker-support'
   id 'elasticsearch.global-build-info'
+  id 'java-gradle-plugin'
   id "com.diffplug.spotless" version "5.6.1" apply false
 }
 
@@ -265,7 +266,7 @@ allprojects {
         }
       }
       boolean hasShadow = project.plugins.hasPlugin(ShadowPlugin)
-      project.configurations.compile.dependencies
+      project.configurations.implementation.dependencies
         .findAll()
         .toSorted(sortClosure)
         .each({ c -> depJavadocClosure(hasShadow, c) })

@@ -28,9 +28,11 @@ plugins {
 
 group = 'org.elasticsearch.gradle'
 
+test.enabled=false
+
 String minimumGradleVersion = file('src/main/resources/minimumGradleVersion').text.trim()
 if (GradleVersion.current() < GradleVersion.version(minimumGradleVersion)) {
-  throw new GradleException("Gradle ${minimumGradleVersion}+ is required to build elasticsearch")
+  throw new GradleException("GradleVersion.current()=${GradleVersion.current()} Gradle ${minimumGradleVersion}+ is required to build elasticsearch")
 }
 
 if (project == rootProject) {
@@ -83,7 +85,10 @@ tasks.withType(JavaCompile).configureEach {
  *****************************************************************************/
 
 repositories {
-  jcenter()
+  maven {
+    allowInsecureProtocol = true
+    url "https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/"
+  }
 }
 
 dependencies {

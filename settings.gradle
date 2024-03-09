@@ -1,3 +1,20 @@
+pluginManagement {
+  repositories {
+    maven {
+      allowInsecureProtocol = true
+      url "https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/"
+    }
+    maven {
+      allowInsecureProtocol = true
+      url "https://maven.repo.cmc.tools.huawei.com/artifactory/maven-oss"
+    }
+    maven {
+      allowInsecureProtocol = true
+      url "https://maven.cloudartifact.lfg.dragon.tools.huawei.com/artifactory/cbu-maven-public"
+    }
+  }
+}
+
 plugins {
   id "com.gradle.enterprise" version "3.5"
 }

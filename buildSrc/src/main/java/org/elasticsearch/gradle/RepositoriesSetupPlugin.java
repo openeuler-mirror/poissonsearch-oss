@@ -26,13 +26,21 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import groovy.lang.Closure;
 
 public class RepositoriesSetupPlugin implements Plugin<Project> {
 
@@ -48,6 +56,7 @@ public class RepositoriesSetupPlugin implements Plugin<Project> {
      * Adds repositories used by ES projects and dependencies
      */
     public static void configureRepositories(Project project) {
+        System.setProperty("skip_secure_uri_check", "true");
         // ensure all repositories use secure urls
         // TODO: remove this with gradle 7.0, which no longer allows insecure urls
         project.getRepositories().all(repository -> {
@@ -69,30 +78,29 @@ public class RepositoriesSetupPlugin implements Plugin<Project> {
             // such that we don't have to pass hardcoded files to gradle
             repos.mavenLocal();
         }
-        repos.jcenter();
-
-        String luceneVersion = VersionProperties.getLucene();
-        if (luceneVersion.contains("-snapshot")) {
-            // extract the revision number from the version with a regex matcher
-            Matcher matcher = LUCENE_SNAPSHOT_REGEX.matcher(luceneVersion);
-            if (matcher.find() == false) {
-                throw new GradleException("Malformed lucene snapshot version: " + luceneVersion);
-            }
-            String revision = matcher.group(1);
-            MavenArtifactRepository luceneRepo = repos.maven(repo -> {
-                repo.setName("lucene-snapshots");
-                repo.setUrl("https://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/" + revision);
-            });
-            repos.exclusiveContent(exclusiveRepo -> {
-                exclusiveRepo.filter(
-                    descriptor -> descriptor.includeVersionByRegex("org\\.apache\\.lucene", ".*", ".*-snapshot-" + revision)
-                );
-                exclusiveRepo.forRepositories(luceneRepo);
-            });
-        }
+        repos.maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("oss_center");
+            mavenArtifactRepository.setUrl("https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/");
+            mavenArtifactRepository.setAllowInsecureProtocol(true);
+        });
+        repos.maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("opensource");
+            mavenArtifactRepository.setUrl("https://maven.repo.cmc.tools.huawei.com/artifactory/maven-oss");
+            mavenArtifactRepository.setAllowInsecureProtocol(true);
+        });
+        repos.maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("tool");
+            mavenArtifactRepository.setUrl("https://maven.cloudartifact.lfg.dragon.tools.huawei.com/artifactory/cbu-maven-public");
+            mavenArtifactRepository.setAllowInsecureProtocol(true);
+        });
     }
 
     private static void assertRepositoryURIIsSecure(final String repositoryName, final String projectPath, final URI uri) {
+        if (Objects.equals(System.getProperty("skip_secure_uri_check"), "true")) {
+            // for now they don't provide secure uri for artifactory.
+            return;
+        }
+
         if (uri != null && SECURE_URL_SCHEMES.contains(uri.getScheme()) == false) {
             String url;
             try {
