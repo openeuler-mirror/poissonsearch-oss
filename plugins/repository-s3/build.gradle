@@ -300,6 +300,7 @@ thirdPartyAudit.ignoreMissingClasses(
   'org.apache.avalon.framework.logger.Logger',
   'org.apache.log.Hierarchy',
   'org.apache.log.Logger',
+  'javax.jms.Message',
   'software.amazon.ion.IonReader',
   'software.amazon.ion.IonSystem',
   'software.amazon.ion.IonType',

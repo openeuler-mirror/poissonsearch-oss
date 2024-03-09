@@ -52,5 +52,7 @@ thirdPartyAudit.ignoreMissingClasses(
   'javax.servlet.ServletContextListener',
   'org.apache.avalon.framework.logger.Logger',
   'org.apache.log.Hierarchy',
-  'org.apache.log.Logger'
+  'org.apache.log.Logger',
+  'org.apache.avalon.framework.logger.Logger',
+  'javax.jms.Message',
 )

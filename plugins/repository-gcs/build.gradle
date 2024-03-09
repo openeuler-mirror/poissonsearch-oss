@@ -136,6 +136,7 @@ thirdPartyAudit {
     'org.apache.avalon.framework.logger.Logger',
     'org.apache.log.Hierarchy',
     'org.apache.log.Logger',
+    'javax.jms.Message',
     // optional apache http client dependencies
     'org.apache.http.ConnectionReuseStrategy',
     'org.apache.http.Header',
