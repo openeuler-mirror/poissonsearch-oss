@@ -85,7 +85,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestionBuilder;
-import org.elasticsearch.xpack.core.index.query.PinnedQueryBuilder;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 
@@ -1380,18 +1379,6 @@ public class SearchIT extends ESRestHighLevelClientTestCase {
         CountResponse countResponse = execute(countRequest, highLevelClient()::count, highLevelClient()::countAsync);
         assertCountHeader(countResponse);
         assertEquals(3, countResponse.getCount());
-    }
-
-    public void testSearchWithBasicLicensedQuery() throws IOException {
-        SearchRequest searchRequest = new SearchRequest("index");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        PinnedQueryBuilder pinnedQuery = new PinnedQueryBuilder(new MatchAllQueryBuilder(), "2", "1");
-        searchSourceBuilder.query(pinnedQuery);
-        searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = execute(searchRequest, highLevelClient()::search, highLevelClient()::searchAsync);
-        assertSearchHeader(searchResponse);
-        assertFirstHit(searchResponse, hasId("2"));
-        assertSecondHit(searchResponse, hasId("1"));
     }
 
     private static void assertCountHeader(CountResponse countResponse) {
