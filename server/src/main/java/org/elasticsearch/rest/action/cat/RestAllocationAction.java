@@ -19,7 +19,6 @@
 
 package org.elasticsearch.rest.action.cat;
 
-import com.carrotsearch.hppc.ObjectIntScatterMap;
 import org.elasticsearch.action.admin.cluster.node.stats.NodeStats;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse;
@@ -36,6 +35,7 @@ import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.rest.RestResponse;
 import org.elasticsearch.rest.action.RestActionListener;
 import org.elasticsearch.rest.action.RestResponseListener;
+import com.carrotsearch.hppc.ObjectIntHashMap;
 
 import java.util.List;
 
@@ -108,7 +108,7 @@ public class RestAllocationAction extends AbstractCatAction {
     }
 
     private Table buildTable(RestRequest request, final ClusterStateResponse state, final NodesStatsResponse stats) {
-        final ObjectIntScatterMap<String> allocs = new ObjectIntScatterMap<>();
+        final ObjectIntHashMap<String> allocs = new ObjectIntHashMap<>();
 
         for (ShardRouting shard : state.getState().routingTable().allShards()) {
             String nodeId = "UNASSIGNED";

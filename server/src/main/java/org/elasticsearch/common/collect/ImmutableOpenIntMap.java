@@ -378,6 +378,11 @@ public final class ImmutableOpenIntMap<VType> implements Iterable<IntObjectCurso
         }
 
         @Override
+        public VType indexRemove(int index) {
+            return map.indexRemove(index);
+        }
+
+        @Override
         public void release() {
             map.release();
         }
