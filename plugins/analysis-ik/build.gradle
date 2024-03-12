@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+esplugin {
+  description 'The IK Analysis plugin integrates Lucene IK analyzer, and support customized dictionary. It supports major versions of Elasticsearch and OpenSearch.'
+  classname 'org.elasticsearch.plugin.analysis.ik.AnalysisIkPlugin'
+}
+
+group 'org.elasticsearch'
+version '7.10.2'
+
+repositories {
+    mavenCentral()
+}
+
+
+bundlePlugin {
+  from('config/') {
+    into 'config'
+  }
+  from('src/main/resources/'){
+    include 'plugin-security.policy'
+  }
+}
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    api "org.apache.httpcomponents:httpclient:${versions.httpclient}"
+    api "org.apache.httpcomponents:httpcore:${versions.httpcore}"
+    api "commons-codec:commons-codec:${versions.commonscodec}"
+    api "commons-logging:commons-logging:${versions.commonslogging}"
+}
+
+test {
+    useJUnitPlatform()
+}
