@@ -87,7 +87,7 @@ tasks.withType(JavaCompile).configureEach {
 repositories {
   maven {
     allowInsecureProtocol = true
-    url "https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/"
+    url "https://maven.aliyun.com/repository/jcenter"
   }
 }
 

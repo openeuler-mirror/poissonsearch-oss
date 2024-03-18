@@ -1,17 +1,20 @@
 pluginManagement {
   repositories {
     maven {
-      allowInsecureProtocol = true
-      url "https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/"
+      url 'https://maven.aliyun.com/repository/public/'
     }
     maven {
-      allowInsecureProtocol = true
-      url "https://maven.repo.cmc.tools.huawei.com/artifactory/maven-oss"
+      url 'https://maven.aliyun.com/repository/central'
     }
     maven {
-      allowInsecureProtocol = true
-      url "https://maven.cloudartifact.lfg.dragon.tools.huawei.com/artifactory/cbu-maven-public"
+      url 'https://maven.aliyun.com/repository/gradle-plugin'
     }
+    maven {
+      url 'https://maven.aliyun.com/repository/jcenter'
+    }
+    mavenCentral()
+    jcenter()
+    gradlePluginPortal()
   }
 }
 

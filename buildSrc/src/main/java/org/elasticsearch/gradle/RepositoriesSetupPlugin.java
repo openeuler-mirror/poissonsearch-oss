@@ -79,20 +79,28 @@ public class RepositoriesSetupPlugin implements Plugin<Project> {
             repos.mavenLocal();
         }
         repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("oss_center");
-            mavenArtifactRepository.setUrl("https://cmc.centralrepo.rnd.huawei.com/artifactory/maven-central-repo/");
+            mavenArtifactRepository.setName("aliyun_public");
+            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/public");
             mavenArtifactRepository.setAllowInsecureProtocol(true);
         });
         repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("opensource");
-            mavenArtifactRepository.setUrl("https://maven.repo.cmc.tools.huawei.com/artifactory/maven-oss");
+            mavenArtifactRepository.setName("aliyun_center");
+            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/central");
             mavenArtifactRepository.setAllowInsecureProtocol(true);
         });
         repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("tool");
-            mavenArtifactRepository.setUrl("https://maven.cloudartifact.lfg.dragon.tools.huawei.com/artifactory/cbu-maven-public");
+            mavenArtifactRepository.setName("aliyun_gradle-plugin");
+            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/gradle-plugin");
             mavenArtifactRepository.setAllowInsecureProtocol(true);
         });
+        repos.maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("aliyun_jcenter");
+            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/jcenter");
+            mavenArtifactRepository.setAllowInsecureProtocol(true);
+        });
+        repos.mavenCentral();
+        repos.gradlePluginPortal();
+        repos.jcenter();
     }
 
     private static void assertRepositoryURIIsSecure(final String repositoryName, final String projectPath, final URI uri) {
