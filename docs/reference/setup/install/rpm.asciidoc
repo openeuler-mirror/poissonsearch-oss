@@ -1,0 +1,144 @@
+[[rpm]]
+=== Install Poissonsearch with RPM
+
+The RPM for Poissonsearch can be <<install-rpm,downloaded from our website>>
+or from our  <<rpm-repo,RPM repository>>. It can be used to install
+Poissonsearch on any RPM-based system such as OpenSuSE, SLES, Centos, Red Hat,
+and Oracle Enterprise.
+
+NOTE: RPM install is not supported on distributions with old versions of RPM,
+such as SLES 11 and CentOS 5.  Please see <<targz>> instead.
+
+include::license.asciidoc[]
+
+NOTE: Poissonsearch includes a bundled version of https://openjdk.java.net[OpenJDK]
+from the JDK maintainers (GPLv2+CE). To use your own version of Java,
+see the <<jvm-version, JVM version requirements>>
+
+[[rpm-key]]
+==== Import the Elasticsearch PGP Key
+
+include::key.asciidoc[]
+
+[source,sh]
+-------------------------
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+-------------------------
+
+[[install-rpm]]
+==== Download and install the RPM manually
+
+ifeval::["{release-state}"=="unreleased"]
+
+Version {version} of Poissonsearch has not yet been released.
+
+endif::[]
+
+ifeval::["{release-state}"!="unreleased"]
+
+The RPM for Poissonsearch v{version} can be downloaded from the website and installed as follows:
+
+["source","sh",subs="attributes"]
+--------------------------------------------
+wget https://repo.openeuler.org/openEuler-22.03-LTS-SP3/everything/x86_64/packages/poissonsearch-oss/poissonsearch-oss-{version}-x86_64.rpm
+wget https://repo.openeuler.org/openEuler-22.03-LTS-SP3/everything/x86_64/packages/poissonsearch-oss/poissonsearch-oss-{version}-x86_64.rpm.sha512
+shasum -a 512 -c poissonsearch-oss-{version}-x86_64.rpm.sha512 <1>
+sudo rpm --install poissonsearch-oss-{version}-x86_64.rpm
+--------------------------------------------
+<1> Compares the SHA of the downloaded RPM and the published checksum, which should output
+    `poissonsearch-{version}-x86_64.rpm: OK`.
+
+endif::[]
+
+include::skip-set-kernel-parameters.asciidoc[]
+
+[[rpm-sysv-init-vs-systemd]]
+==== SysV `init` vs `systemd`
+
+include::init-systemd.asciidoc[]
+
+[[rpm-running-init]]
+include::rpm-init.asciidoc[]
+
+[[rpm-running-systemd]]
+include::systemd.asciidoc[]
+
+[[rpm-check-running]]
+include::check-running.asciidoc[]
+
+[[rpm-configuring]]
+==== Configuring Poissonsearch
+
+include::etc-elasticsearch.asciidoc[]
+
+The RPM also has a system configuration file (`/etc/sysconfig/poissonsearch`),
+which allows you to set the following parameters:
+
+include::sysconfig-file.asciidoc[]
+
+NOTE: Distributions that use `systemd` require that system resource limits be
+configured via `systemd` rather than via the `/etc/sysconfig/poissonsearch`
+file.  See <<systemd>> for more information.
+
+[[rpm-layout]]
+==== Directory layout of RPM
+
+The RPM places config files, logs, and the data directory in the appropriate
+locations for an RPM-based system:
+
+
+[cols="<h,<,<m,<m",options="header",]
+|=======================================================================
+| Type | Description | Default Location | Setting
+| home
+  | Poissonsearch home directory or `$ES_HOME`
+  | /usr/share/poissonsearch
+ d|
+
+| bin
+  | Binary scripts including `elasticsearch` to start a node
+    and `elasticsearch-plugin` to install plugins
+  | /usr/share/poissonsearch/bin
+ d|
+
+| conf
+  | Configuration files including `elasticsearch.yml`
+  | /etc/poissonsearch
+  | <<config-files-location,ES_PATH_CONF>>
+
+| conf
+  | Environment variables including heap size, file descriptors.
+  | /etc/sysconfig/poissonsearch
+ d|
+
+| data
+  | The location of the data files of each index / shard allocated
+    on the node. Can hold multiple locations.
+  | /var/lib/poissonsearch
+  | path.data
+
+| jdk
+  | The bundled Java Development Kit used to run Poissonsearch. Can
+    be overridden by setting the `JAVA_HOME` environment variable
+    in `/etc/sysconfig/poissonsearch`.
+  | /usr/share/poissonsearch/jdk
+ d|
+
+| logs
+  | Log files location.
+  | /var/log/poissonsearch
+  | path.logs
+
+| plugins
+  | Plugin files location. Each plugin will be contained in a subdirectory.
+  | /usr/share/poissonsearch/plugins
+  |
+
+| repo
+  | Shared file system repository locations. Can hold multiple locations. A file system repository can be placed in to any subdirectory of any directory specified here.
+ d| Not configured
+  | path.repo
+
+|=======================================================================
+
+include::next-steps.asciidoc[]

@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'org.elasticsearch'
+version '7.10.2'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    api "org.nlpcn:nlp-lang:1.7"
+}
+
+esplugin {
+  description 'This Pinyin Analysis plugin facilitates the conversion between Chinese characters and Pinyin. It supports major versions of Elasticsearch and OpenSearch'
+  classname 'org.elasticsearch.plugin.analysis.pinyin.AnalysisPinyinPlugin'
+}
+
+test {
+    useJUnitPlatform()
+}

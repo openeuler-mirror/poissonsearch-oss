@@ -1,0 +1,20 @@
+==== Running Poissonsearch with SysV `init`
+
+Use the `chkconfig` command to configure Elasticsearch to start automatically
+when the system boots up:
+
+[source,sh]
+--------------------------------------------------
+sudo chkconfig --add poissonsearch
+--------------------------------------------------
+
+Poissonsearch can be started and stopped using the `service` command:
+
+[source,sh]
+--------------------------------------------
+sudo -i service poissonsearch start
+sudo -i service poissonsearch stop
+--------------------------------------------
+
+If Poissonsearch fails to start for any reason, it will print the reason for
+failure to STDOUT. Log files can be found in `/var/log/poissonsearch/`.

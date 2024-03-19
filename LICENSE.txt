@@ -1,0 +1,4 @@
+Source code in this repository is licensed under the Apache License 2.0.
+The build produces a set of binaries - one set that falls under the
+Apache License 2.0. The binaries that contain `-oss` in the
+artifact name are licensed under the Apache License 2.0.

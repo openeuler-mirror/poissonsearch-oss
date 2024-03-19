@@ -1,0 +1,22 @@
+// tag::unix[]
+Linux and macOS installations support Unix-style paths:
+
+[source,yaml]
+----
+path:
+  data: /var/data/poissonsearch
+  logs: /var/log/poissonsearch
+----
+// end::unix[]
+
+
+// tag::win[]
+Windows installations support DOS paths with escaped backslashes:
+
+[source,yaml]
+----
+path:
+  data: "C:\\Elastic\\Poissonsearch\\data"
+  logs: "C:\\Elastic\\Poissonsearch\\logs"
+----
+// end::win[]

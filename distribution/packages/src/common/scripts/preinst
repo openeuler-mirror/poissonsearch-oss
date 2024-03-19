@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# This script is executed in the pre-installation phase
+#
+#   On Debian,
+#       $1=install : indicates an new install
+#       $1=upgrade : indicates an upgrade
+#
+#   On RedHat,
+#       $1=1       : indicates an new install
+#       $1=2       : indicates an upgrade
+
+err_exit() {
+    echo "$@" >&2
+    exit 1
+}
+
+# source the default env file
+if [ -f "${path.env}" ]; then
+    . "${path.env}"
+fi
+
+export ES_PATH_CONF=${ES_PATH_CONF:-${path.conf}}
+
+case "$1" in
+
+    # Debian ####################################################
+    install|upgrade)
+
+        # Create poissonsearch group if not existing
+        if ! getent group poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch group..."
+            addgroup --quiet --system poissonsearch
+            echo " OK"
+        fi
+
+        # Create poissonsearch user if not existing
+        if ! id poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch user..."
+            adduser --quiet \
+                    --system \
+                    --no-create-home \
+                    --home /nonexistent \
+                    --ingroup poissonsearch \
+                    --disabled-password \
+                    --shell /bin/false \
+                    poissonsearch
+            echo " OK"
+        fi
+    ;;
+    abort-deconfigure|abort-upgrade|abort-remove)
+    ;;
+
+    # RedHat ####################################################
+    1|2)
+
+        # Create poissonsearch group if not existing
+        if ! getent group poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch group..."
+            groupadd -r poissonsearch
+            echo " OK"
+        fi
+
+        # Create poissonsearch user if not existing
+        if ! id poissonsearch > /dev/null 2>&1 ; then
+            echo -n "Creating poissonsearch user..."
+            useradd --system \
+                    --no-create-home \
+                    --home-dir /nonexistent \
+                    --gid poissonsearch \
+                    --shell /sbin/nologin \
+                    --comment "poissonsearch user" \
+                    poissonsearch
+            echo " OK"
+        fi
+    ;;
+
+    *)
+        err_exit "pre install script called with unknown argument \`$1'"
+    ;;
+esac
+
+${scripts.footer}
