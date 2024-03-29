@@ -57,6 +57,9 @@ public final class IngestDocument {
     private static final String INGEST_KEY_PREFIX = INGEST_KEY + ".";
     private static final String SOURCE_PREFIX = SourceFieldMapper.NAME + ".";
 
+    public static final int MAX_PIPELINES_NESTED_DEPTH =
+        Integer.parseInt(System.getProperty("es.ingest.max_nested_pipelines", "100"));
+
     static final String TIMESTAMP = "timestamp";
 
     private final Map<String, Object> sourceAndMetadata;
@@ -740,6 +743,15 @@ public final class IngestDocument {
      * @param handler handles the result or failure
      */
     public void executePipeline(Pipeline pipeline, BiConsumer<IngestDocument, Exception> handler) {
+        if (executedPipelines.size() > MAX_PIPELINES_NESTED_DEPTH) {
+            handler.accept(
+                null,
+                new UnsupportedOperationException("Detect too many nested pipelines, only support no more than" +
+                    MAX_PIPELINES_NESTED_DEPTH + " nested pipelines")
+            );
+            return;
+        }
+
         if (executedPipelines.add(pipeline.getId())) {
             Object previousPipeline = ingestMetadata.put("pipeline", pipeline.getId());
             pipeline.execute(this, (result, e) -> {

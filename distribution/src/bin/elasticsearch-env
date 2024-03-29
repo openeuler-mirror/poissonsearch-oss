@@ -38,7 +38,6 @@ ES_CLASSPATH="$ES_HOME/lib/*"
 # now set the path to java
 if [ ! -z "$JAVA_HOME" ]; then
   JAVA="$JAVA_HOME/bin/java"
-  JAVA_TYPE="JAVA_HOME"
 else
   if [ "$(uname -s)" = "Darwin" ]; then
     # macOS has a different structure
@@ -46,18 +45,16 @@ else
   else
     JAVA="$ES_HOME/jdk/bin/java"
   fi
-  JAVA_TYPE="bundled jdk"
 fi
 
 if [ ! -x "$JAVA" ]; then
-    echo "could not find java in $JAVA_TYPE at $JAVA, try use system install java" >&2
-    java --version
-    if [ $? -ne 0 ]; then
-      echo "could not find system java, please specify JAVA_HOME" >&2
-      exit 1
-    fi
-    JAVA="java"
+  java --version
+  if [ $? -ne 0 ]; then
+    echo "could not find system java, please specify JAVA_HOME" >&2
+    exit 1
   fi
+  JAVA="java"
+fi
 
 # do not let JAVA_TOOL_OPTIONS slip in (as the JVM does by default)
 if [ ! -z "$JAVA_TOOL_OPTIONS" ]; then
@@ -98,7 +95,7 @@ ES_DISTRIBUTION_TYPE=${es.distribution.type}
 ES_BUNDLED_JDK=${es.bundled_jdk}
 
 if [[ "$ES_BUNDLED_JDK" == "false" ]]; then
-  echo "warning: no-jdk distributions that do not bundle a JDK are deprecated and will be removed in a future release" >&2
+  echo "Running without bundled jdk." >&2
 fi
 
 if [[ "$ES_DISTRIBUTION_TYPE" == "docker" ]]; then
