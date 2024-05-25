@@ -287,6 +287,12 @@ class VersionPropertiesLoader {
       }
       elasticsearch += "-" + qualifier
     }
+
+    String poissonsearch_oss = loadedProps.getProperty("poissonsearch-oss");
+    if (poissonsearch_oss != null && !poissonsearch_oss.isEmpty()) {
+      elasticsearch = poissonsearch_oss + "-c" + elasticsearch;
+    }
+
     final String buildSnapshotSystemProperty = systemProperties.getProperty("build.snapshot", "false");
     switch (buildSnapshotSystemProperty) {
       case "true":
