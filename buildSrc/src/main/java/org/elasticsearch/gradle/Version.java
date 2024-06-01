@@ -51,6 +51,10 @@ public final class Version implements Comparable<Version> {
 
     private static final Pattern relaxedPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z0-9_]+)*?");
 
+    private static final Pattern poissonsearchPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)-c(\\d+)\\.(\\d+)\\.(\\d+)(-alpha\\d+|-beta\\d+|-rc\\d+)?(-SNAPSHOT)?");
+
+    private static final Pattern cutPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)-c(.*)");
+
     public Version(int major, int minor, int revision) {
         Objects.requireNonNull(major, "major version can't be null");
         Objects.requireNonNull(minor, "minor version can't be null");
@@ -75,13 +79,19 @@ public final class Version implements Comparable<Version> {
     }
 
     public static Version fromString(final String s, final Mode mode) {
-        Objects.requireNonNull(s);
-        Matcher matcher = mode == Mode.STRICT ? pattern.matcher(s) : relaxedPattern.matcher(s);
+        String versionStr = Objects.requireNonNull(s);
+        if (poissonsearchPattern.matcher(s).matches()) {
+            Matcher cutMatcher = cutPattern.matcher(s);
+            if (cutMatcher.matches()) {
+                versionStr = cutMatcher.group(4);
+            }
+        }
+        Matcher matcher = mode == Mode.STRICT ? pattern.matcher(versionStr) : relaxedPattern.matcher(versionStr);
         if (matcher.matches() == false) {
             String expected = mode == Mode.STRICT
                 ? "major.minor.revision[-(alpha|beta|rc)Number][-SNAPSHOT]"
                 : "major.minor.revision[-extra]";
-            throw new IllegalArgumentException("Invalid version format: '" + s + "'. Should be " + expected);
+            throw new IllegalArgumentException("Invalid version format: '" + versionStr + "'. Should be " + expected);
         }
 
         return new Version(Integer.parseInt(matcher.group(1)), parseSuffixNumber(matcher.group(2)), parseSuffixNumber(matcher.group(3)));
