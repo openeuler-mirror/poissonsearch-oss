@@ -3,7 +3,6 @@ plugins {
 }
 
 group 'org.elasticsearch'
-version '7.10.2'
 
 repositories {
     mavenCentral()
