@@ -79,23 +79,8 @@ public class RepositoriesSetupPlugin implements Plugin<Project> {
             repos.mavenLocal();
         }
         repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("aliyun_public");
-            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/public");
-            mavenArtifactRepository.setAllowInsecureProtocol(true);
-        });
-        repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("aliyun_center");
-            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/central");
-            mavenArtifactRepository.setAllowInsecureProtocol(true);
-        });
-        repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("aliyun_gradle-plugin");
-            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/gradle-plugin");
-            mavenArtifactRepository.setAllowInsecureProtocol(true);
-        });
-        repos.maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("aliyun_jcenter");
-            mavenArtifactRepository.setUrl("https://maven.aliyun.com/repository/jcenter");
+            mavenArtifactRepository.setName("huawei_maven");
+            mavenArtifactRepository.setUrl("https://mirrors.huaweicloud.com/repository/maven/");
             mavenArtifactRepository.setAllowInsecureProtocol(true);
         });
         repos.mavenCentral();
